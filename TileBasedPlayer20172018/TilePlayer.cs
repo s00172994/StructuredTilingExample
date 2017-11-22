@@ -1,84 +1,67 @@
-﻿using Microsoft.Xna.Framework;
+﻿using AnimatedSprite;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Tiling;
 
 namespace Tiler
 {
 
-    public class TilePlayer
+    public class TilePlayer : RotatingSprite
     {
-        Texture2D texture;
-        Vector2 position;
-        int speed;
-        Vector2 previousPosition;
+        //List<TileRef> images = new List<TileRef>() { new TileRef(15, 2, 0)};
+        //TileRef currentFrame;
+        int speed = 5;
+        float turnspeed = 0.03f;
+        public Vector2 previousPosition;
 
-        public Rectangle CollisionField
+        public TilePlayer(Game game, Vector2 userPosition, 
+            List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth) 
+                : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
-            get
-            {
-                return new Rectangle(Position.ToPoint(), 
-                    new Point(texture.Width, texture.Height));
-            }
-
-        }
-
-        public Vector2 Position
-        {
-            get
-            {
-                return position;
-            }
-
-            set
-            {
-                position = value;
-            }
-        }
-
-        public TilePlayer(Texture2D tx,
-            Vector2 startPos)
-        {
-            texture = tx;
-            Position = previousPosition = startPos;
-            speed = 5;
-
+            DrawOrder = 1;
+            
         }
 
         public void Collision(Collider c)
         {
-            if (CollisionField.Intersects(c.CollisionField))
-                Position = previousPosition;
+            if (BoundingRectangle.Intersects(c.CollisionField))
+                PixelPosition = previousPosition;
         }
 
-        public void update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
-            previousPosition = Position;
+            previousPosition = PixelPosition;
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                this.Position += new Vector2(1, 0) * speed;
+                this.PixelPosition += new Vector2(1, 0) * speed;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                this.Position += new Vector2(-1, 0) * speed;
+                this.PixelPosition += new Vector2(-1, 0) * speed;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                this.Position += new Vector2(0, -1) * speed;
+                this.PixelPosition += new Vector2(0, -1) * speed;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
-                this.Position += new Vector2(0, 1) * speed;
+                this.PixelPosition += new Vector2(0, 1) * speed;
             }
+            if (Keyboard.GetState().IsKeyDown(Keys.Z))
+                this.angleOfRotation -= turnspeed;
+            if (Keyboard.GetState().IsKeyDown(Keys.X))
+                this.angleOfRotation += turnspeed;
 
+            base.Update(gameTime);
         }
-
-        public void Draw(SpriteBatch sp)
+        public override void Draw(GameTime gameTime)
         {
-            sp.Draw(texture, CollisionField, Color.White);
+            base.Draw(gameTime);
         }
-    }
+   }
 }

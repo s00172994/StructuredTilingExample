@@ -14,12 +14,12 @@ namespace AnimatedSprite
     {
         //sprite texture and position
         
-        private bool visible;
+        private bool visible = true;
         protected Vector2 origin;
         protected float angleOfRotation;
         protected float spriteDepth = 1f;
         private float scale = 1f;
-
+        private Vector2 _pixelPosition;
         private Rectangle boundingRectangle;
 
         public bool Visible
@@ -66,9 +66,12 @@ namespace AnimatedSprite
         {
             get
             {
-                return new Vector2(TilePosition.X * FrameWidth, 
-                                    TilePosition.Y * FrameHeight) ;
+                //return new Vector2(TilePosition.X * FrameWidth, 
+                //                    TilePosition.Y * FrameHeight) ;
+                return _pixelPosition;
             }
+
+            set { _pixelPosition = value; }
 
         }
 
@@ -118,7 +121,7 @@ namespace AnimatedSprite
         public AnimateSheetSprite(Game g, Vector2 userPosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth) : base(g)
         {
             spriteDepth = layerDepth;
-            TilePosition = userPosition;
+            _pixelPosition = userPosition;
             visible = true;
             FrameHeight = frameHeight;
             FrameWidth = frameWidth;
@@ -189,7 +192,8 @@ namespace AnimatedSprite
                 spriteBatch.Begin(SpriteSortMode.Immediate,
                         BlendState.AlphaBlend, null, null, null, null, Camera.CurrentCameraTranslation);
                 spriteBatch.Draw(SpriteSheet,
-                    PixelPosition + origin, sourceRectangle,
+                    PixelPosition + origin, 
+                    sourceRectangle,
                     Color.White, angleOfRotation, origin,
                     Scale, SpriteEffects.None, spriteDepth);
                 spriteBatch.End();

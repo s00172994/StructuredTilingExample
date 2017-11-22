@@ -52,7 +52,7 @@ namespace Tiling
                         List<TileRef> _tileRefs, int tileWidth, int tileHeight) : base(game)
         {
             _tileSheet = Game.Content.Load<Texture2D>(@"Tiles\tank tiles 64 x 64");
-
+            DrawOrder = 0;
             game.Components.Add(this);
             int tileMapHeight = tileMap.GetLength(0); // row int[row,col]
             int tileMapWidth = tileMap.GetLength(1); // dim 0 = row, dim 1 = col
@@ -79,11 +79,6 @@ namespace Tiling
                 }
 
         }
-        protected override void LoadContent()
-        {
-           
-            base.LoadContent();
-        }
         public override void Draw(GameTime gameTime)
         {
             if (_tileSheet == null) return;
@@ -104,7 +99,7 @@ namespace Tiling
                     new Rectangle(position.ToPoint(), new Point(t.TileWidth, t.TileHeight )),
                     new Rectangle(t.TileRef._sheetPosX * t.TileWidth, t.TileRef._sheetPosY * t.TileHeight,
                                         t.TileWidth , t.TileHeight )
-                    , Color.White);
+                    , Color.White,0f,Vector2.Zero,SpriteEffects.None,0f);
             }
             sp.End();
             base.Draw(gameTime);

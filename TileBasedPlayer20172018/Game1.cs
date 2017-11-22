@@ -1,8 +1,10 @@
 ﻿using CameraNS;
+using Engine.Engines;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using Tiler;
 using Tiling;
 
 namespace TileBasedPlayer20172018
@@ -17,6 +19,9 @@ namespace TileBasedPlayer20172018
         int tileWidth = 64;
         int tileHeight = 64;
         List<TileRef> TileRefs = new List<TileRef>();
+        List<Collider> colliders = new List<Collider>();
+        string[] backTileNames = { "blue box", "pavement", "ground", "blue", "home" };
+        public enum TileType { BLUEBOX, PAVEMENT, GROUND, BLUE,HOME };
         int[,] tileMap = new int[,]
     {
         {1,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
@@ -56,6 +61,20 @@ namespace TileBasedPlayer20172018
             // TODO: Add your initialization logic here
             new Camera(this, Vector2.Zero, 
                 new Vector2(tileMap.GetLength(1) * tileWidth, tileMap.GetLength(0) * tileHeight));
+            new InputEngine(this);
+            Services.AddService(new TilePlayer(this, new Vector2(64, 128), new List<TileRef>()
+            {
+                new TileRef(15, 2, 0),
+                new TileRef(15, 3, 0),
+                new TileRef(15, 4, 0),
+                new TileRef(15, 5, 0),
+                new TileRef(15, 6, 0),
+                new TileRef(15, 7, 0),
+                new TileRef(15, 8, 0),
+            }, 64, 64, 0f));
+            SetColliders(TileType.GROUND);
+            SetColliders(TileType.BLUEBOX);
+
             base.Initialize();
         }
 
@@ -68,21 +87,37 @@ namespace TileBasedPlayer20172018
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Services.AddService(spriteBatch);
+            Services.AddService(Content.Load<Texture2D>(@"Tiles/tank tiles 64 x 64"));
 
             // Tile References to be drawn on the Map corresponding to the entries in the defined 
             // Tile Map
-
+            // "free", "pavement", "ground", "blue", "home" 
             TileRefs.Add(new TileRef(4, 2, 0));
             TileRefs.Add(new TileRef(3, 3, 1));
             TileRefs.Add(new TileRef(6, 3, 2));
             TileRefs.Add(new TileRef(6, 2, 3));
             TileRefs.Add(new TileRef(0, 2, 4));
             // Names fo the Tiles
-            string[] backTileNames = { "free", "pavement", "ground", "blue", "home" };
+            
             new SimpleTileLayer(this, backTileNames, tileMap, TileRefs, tileWidth, tileHeight);
             // TODO: use this.Content to load your game content here
         }
 
+        public void SetColliders(TileType t)
+        {
+            for (int x = 0; x < tileMap.GetLength(1); x++)
+                for (int y = 0; y < tileMap.GetLength(0); y++)
+                {
+                    if (tileMap[y, x] == (int)t)
+                    {
+                        colliders.Add(new Collider(this,
+                            Content.Load<Texture2D>(@"Tiles/collider"),
+                            x, y
+                            ));
+                    }
+
+                }
+        }
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.

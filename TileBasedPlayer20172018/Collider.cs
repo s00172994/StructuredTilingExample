@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using AnimatedSprite;
+using CameraNS;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,7 @@ using System.Text;
 namespace Tiler
 {
      
-    public class Collider
+    public class Collider : DrawableGameComponent
     {
         
         public int tileX;
@@ -34,17 +36,44 @@ namespace Tiler
 
         }
 
-        public Collider(Texture2D tx, int tlx, int tly)
+
+        public Collider(Game game, Texture2D tx, int tlx, int tly) : base(game)
         {
+            game.Components.Add(this);
             texture = tx;
             tileX = tlx;
             tileY = tly;
+            DrawOrder = 2;
+        }
+        public override void Update(GameTime gameTime)
+        {
+            TilePlayer p = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
+            if (p == null) return;
+            else
+            {
+                if (p.BoundingRectangle.Intersects(CollisionField))
+                    p.PixelPosition = p.previousPosition;
+            }
+
+            base.Update(gameTime);
+        }
+        public override void Draw(GameTime gameTime)
+        {
+            SpriteBatch spriteBatch = Game.Services.GetService<SpriteBatch>();
+            if (visible)
+            {
+                spriteBatch.Begin(SpriteSortMode.Immediate,
+                        BlendState.AlphaBlend, null, null, null, null, Camera.CurrentCameraTranslation);
+                spriteBatch.Draw(texture, CollisionField, Color.White); spriteBatch.End();
+            }
+
+            base.Draw(gameTime);
         }
 
         public void Draw(SpriteBatch sp)
         {
             if (visible)
-            sp.Draw(texture, CollisionField, Color.White);
+                sp.Draw(texture, CollisionField, Color.White);
         }
     }
 }
