@@ -13,12 +13,17 @@ namespace TileBasedPlayer20172018
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
         int tileWidth = 64;
         int tileHeight = 64;
+
         List<TileRef> TileRefs = new List<TileRef>();
         List<Collider> colliders = new List<Collider>();
+
         string[] backTileNames = { "blueBox", "pavement", "blueSteel", "greenBox", "home" };
         public enum TileType { BLUEBOX, PAVEMENT, BLUESTEEL, GREENBOX, HOME };
+
+        #region Tile Map
         int[,] tileMap = new int[,]
         {
         {1,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
@@ -41,6 +46,7 @@ namespace TileBasedPlayer20172018
         {2,2,3,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
         };
+        #endregion
 
         public Game1()
         {
@@ -66,6 +72,7 @@ namespace TileBasedPlayer20172018
                 new Vector2(tileMap.GetLength(1) * tileWidth, tileMap.GetLength(0) * tileHeight));
 
             new InputEngine(this);
+
             Services.AddService(new TilePlayer(this, new Vector2(64, 128), new List<TileRef>()
             {
                 new TileRef(15, 2, 0),
@@ -85,20 +92,19 @@ namespace TileBasedPlayer20172018
 
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            // Add SpriteBatch to services, it can be called anywhere.
             Services.AddService(spriteBatch);
             Services.AddService(Content.Load<Texture2D>(@"Tiles/tank tiles 64 x 64"));
 
             // Tile References to be drawn on the Map corresponding to the entries in the defined 
             // Tile Map
-            // "free", "pavement", "ground", "blue", "home" 
             TileRefs.Add(new TileRef(4, 2, 0));
             TileRefs.Add(new TileRef(3, 3, 1));
             TileRefs.Add(new TileRef(6, 3, 2));
             TileRefs.Add(new TileRef(6, 2, 3));
             TileRefs.Add(new TileRef(0, 2, 4));
-            // Names fo the Tiles
 
             new SimpleTileLayer(this, backTileNames, tileMap, TileRefs, tileWidth, tileHeight);
 
@@ -109,6 +115,7 @@ namespace TileBasedPlayer20172018
         public void SetColliders(TileType t)
         {
             for (int x = 0; x < tileMap.GetLength(1); x++)
+            {
                 for (int y = 0; y < tileMap.GetLength(0); y++)
                 {
                     if (tileMap[y, x] == (int)t)
@@ -118,8 +125,8 @@ namespace TileBasedPlayer20172018
                             x, y
                             ));
                     }
-
                 }
+            } 
         }
 
         protected override void UnloadContent()
@@ -137,7 +144,7 @@ namespace TileBasedPlayer20172018
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.TransparentBlack);
 
             base.Draw(gameTime);
         }
