@@ -9,10 +9,10 @@ using System.Text;
 
 namespace Tiler
 {
-     
+
     public class Collider : DrawableGameComponent
     {
-        
+
         public int tileX;
         public int tileY;
         public Texture2D texture;
@@ -22,21 +22,18 @@ namespace Tiler
         {
             get
             {
-                return new Vector2(tileX * texture.Width,tileY * texture.Height);
+                return new Vector2(tileX * texture.Width, tileY * texture.Height);
             }
 
         }
-
         public Rectangle CollisionField
         {
             get
             {
-                return new Rectangle(WorldPosition.ToPoint(),new Point(texture.Width,texture.Height));
+                return new Rectangle(WorldPosition.ToPoint(), new Point(texture.Width, texture.Height));
             }
 
         }
-
-
         public Collider(Game game, Texture2D tx, int tlx, int tly) : base(game)
         {
             game.Components.Add(this);
@@ -69,7 +66,6 @@ namespace Tiler
 
             base.Draw(gameTime);
         }
-
         public void Draw(SpriteBatch sp)
         {
             if (visible)

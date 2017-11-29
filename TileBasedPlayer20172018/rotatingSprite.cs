@@ -24,7 +24,7 @@ namespace AnimatedSprite
         {
             get
             {
-                return new Rectangle((PixelPosition + origin).ToPoint()  - new Point(FrameWidth * tileRangeDistance/2, FrameHeight * tileRangeDistance/2),
+                return new Rectangle((PixelPosition + origin).ToPoint() - new Point(FrameWidth * tileRangeDistance / 2, FrameHeight * tileRangeDistance / 2),
                     new Point(FrameWidth * tileRangeDistance, FrameHeight * tileRangeDistance));
             }
 
@@ -63,9 +63,9 @@ namespace AnimatedSprite
         HealthBar hbar;
 
         public RotatingSprite(Game game, Vector2 userPosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
-            : base(game,userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
+            : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
-            
+
         }
 
         public void AddHealthBar(HealthBar h)
@@ -78,13 +78,13 @@ namespace AnimatedSprite
             // Only rotate towards the player if he enters the field of View
             if (followed.BoundingRectangle.Intersects(Range))
                 angleOfRotation = TurnToFace(followed.PixelPosition, PixelPosition, angleOfRotation, rotationSpeed);
-                        
+
         }
 
         public void followPosition(Vector2 Pos)
         {
-            
-            angleOfRotation = TurnToFace( Pos, PixelPosition, angleOfRotation, rotationSpeed);
+
+            angleOfRotation = TurnToFace(Pos, PixelPosition, angleOfRotation, rotationSpeed);
         }
 
         protected static float TurnToFace(Vector2 position, Vector2 faceThis,
@@ -108,8 +108,8 @@ namespace AnimatedSprite
 
         public override void Update(GameTime gametime)
         {
-            if(Hbar != null)
-               {
+            if (Hbar != null)
+            {
                 Hbar.health = Health;
                 Hbar.position = PixelPosition - new Vector2(10, 20);
             }

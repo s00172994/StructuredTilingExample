@@ -19,12 +19,12 @@ namespace Tiler
         float turnspeed = 0.03f;
         public Vector2 previousPosition;
 
-        public TilePlayer(Game game, Vector2 userPosition, 
-            List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth) 
+        public TilePlayer(Game game, Vector2 userPosition,
+            List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
                 : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             DrawOrder = 1;
-            
+
         }
 
         public void Collision(Collider c)
@@ -63,5 +63,5 @@ namespace Tiler
         {
             base.Draw(gameTime);
         }
-   }
+    }
 }
