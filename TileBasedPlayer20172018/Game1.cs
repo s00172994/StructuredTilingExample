@@ -13,8 +13,8 @@ namespace TileBasedPlayer20172018
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        int tileWidth = 128;
-        int tileHeight = 128;
+        int tileWidth = 64;
+        int tileHeight = 64;
         List<TileRef> TileRefs = new List<TileRef>();
         List<Collider> colliders = new List<Collider>();
         string[] backTileNames = { "blueBox", "pavement", "blueSteel", "greenBox", "home" };
@@ -45,6 +45,18 @@ namespace TileBasedPlayer20172018
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+
+            //graphics.PreferredBackBufferWidth = 1280;
+            //graphics.PreferredBackBufferHeight = 720;
+            graphics.SynchronizeWithVerticalRetrace = true;
+            graphics.ApplyChanges();
+
+            IsMouseVisible = true;
+            IsFixedTimeStep = true;
+
+            Window.Title = "Tile Based Tank Game - 2D Game Programming Assignment";
+            Window.AllowAltF4 = false;
+
             Content.RootDirectory = "Content";
         }
 
@@ -52,6 +64,7 @@ namespace TileBasedPlayer20172018
         {
             new Camera(this, Vector2.Zero,
                 new Vector2(tileMap.GetLength(1) * tileWidth, tileMap.GetLength(0) * tileHeight));
+
             new InputEngine(this);
             Services.AddService(new TilePlayer(this, new Vector2(64, 128), new List<TileRef>()
             {
@@ -63,6 +76,7 @@ namespace TileBasedPlayer20172018
                 new TileRef(15, 7, 0),
                 new TileRef(15, 8, 0),
             }, 64, 64, 0f));
+
             SetColliders(TileType.BLUESTEEL);
             SetColliders(TileType.BLUEBOX);
 

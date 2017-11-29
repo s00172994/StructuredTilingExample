@@ -16,12 +16,15 @@ namespace CameraNS
     {
         static Vector2 _camPos = Vector2.Zero;
         static Vector2 _worldBound;
-        public static Matrix CurrentCameraTranslation { get
+        public static Matrix CurrentCameraTranslation
+        {
+            get
             {
                 return Matrix.CreateTranslation(new Vector3(
                     -CamPos,
                     0));
-            } }
+            }
+        }
         public float CameraSpeed = 5.0f;
         public static Vector2 CamPos
         {
@@ -45,40 +48,26 @@ namespace CameraNS
 
         public override void Update(GameTime gameTime)
         {
-            if (InputEngine.IsKeyHeld(Keys.Left))
-                move(new Vector2(-1, 0) * CameraSpeed, Game.GraphicsDevice.Viewport);
-            if (InputEngine.IsKeyHeld(Keys.Right))
-                move(new Vector2(1, 0) * CameraSpeed, Game.GraphicsDevice.Viewport);
-            if (InputEngine.IsKeyHeld(Keys.Down))
-                move(new Vector2(0, 1) * CameraSpeed, Game.GraphicsDevice.Viewport);
-            if (InputEngine.IsKeyHeld(Keys.Up))
-                move(new Vector2(0, -1) * CameraSpeed, Game.GraphicsDevice.Viewport);
-
             TilePlayer p = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
             if (p != null)
             {
-                follow(p.PixelPosition, Game.GraphicsDevice.Viewport);
+                Follow(p.PixelPosition, Game.GraphicsDevice.Viewport);
 
                 //Make sure the player stays in the bounds
-                p.PixelPosition = Vector2.Clamp(p.PixelPosition, Vector2.Zero,
-                                                new Vector2(_worldBound.X - p.BoundingRectangle.Width,
-                                                            _worldBound.Y - p.BoundingRectangle.Height));
-
+                //p.PixelPosition = Vector2.Clamp(p.PixelPosition, Vector2.Zero,
+                //                                new Vector2(_worldBound.X - p.BoundingRectangle.Width,
+                //                                            _worldBound.Y - p.BoundingRectangle.Height));
             }
+
             base.Update(gameTime);
         }
 
-        public void move(Vector2 delta, Viewport v)
+        public static void Follow(Vector2 followPos, Viewport v)
         {
-            CamPos += delta;
-            CamPos = Vector2.Clamp(CamPos, Vector2.Zero, _worldBound - new Vector2(v.Width, v.Height));
-        }
-
-        public static void follow(Vector2 followPos, Viewport v)
-        {
-            _camPos = followPos - new Vector2(v.Width / 2, v.Height / 2);
+            // Add smoothness
+            Vector2 delta = (followPos - new Vector2(v.Width / 2, v.Height / 2)) - _camPos; // Distance from following position to camera
+            _camPos += Vector2.Multiply(delta, 0.03f); // Now move the camera by 3%
             _camPos = Vector2.Clamp(_camPos, Vector2.Zero, _worldBound - new Vector2(v.Width, v.Height));
         }
-
     }
 }
