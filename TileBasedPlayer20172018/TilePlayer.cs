@@ -13,12 +13,16 @@ namespace Tiler
 
     public class TilePlayer : RotatingSprite
     {
-        //List<TileRef> images = new List<TileRef>() { new TileRef(15, 2, 0)};
+        //List<TileRef> images = new List<TileRef>() { new TileRef(15, 2, 0) };
         //TileRef currentFrame;
 
-        float speed = 5f;
-        float turnSpeed = 0.03f;
+        float turnSpeed = 0.025f;
+        Vector2 Velocity = new Vector2(0,0);
+        Vector2 MaxVelocity = new Vector2(2.5f, 2.5f);
+        Vector2 Acceleration = new Vector2(0.1f);
+        Vector2 Deceleration = new Vector2(0.08f);
 
+        public Vector2 Direction;
         public Vector2 previousPosition;
 
         public TilePlayer(Game game, Vector2 userPosition,
@@ -26,7 +30,6 @@ namespace Tiler
                 : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             DrawOrder = 1;
-
         }
 
         public void Collision(Collider c)
@@ -39,24 +42,42 @@ namespace Tiler
         {
             previousPosition = PixelPosition;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
-            {
-                this.PixelPosition += Vector2.Lerp(new Vector2(0, 0), new Vector2(1,0), speed) * ;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
-            {
-                this.PixelPosition += Vector2.Lerp(new Vector2(0,0), new Vector2(-1, 0), speed);
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.W))
-            {
-                this.PixelPosition += new Vector2(0, -1) * speed;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-                this.PixelPosition += new Vector2(0, 1) * speed;
-            }
+            Movement();
+
+            Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
+            Velocity = Vector2.Clamp(Velocity, -MaxVelocity, MaxVelocity);
+            this.PixelPosition += (Direction * Velocity);
 
             base.Update(gameTime);
+        }
+
+        public void Movement()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                Velocity -= Acceleration;
+            }
+            else if (Velocity.X < 0)
+            {
+                Velocity += Deceleration;
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                Velocity += Acceleration;
+            }
+            else if (Velocity.X > 0)
+            {
+                Velocity -= Deceleration;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+                this.angleOfRotation -= turnSpeed;
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                this.angleOfRotation += turnSpeed;
+            }
         }
         public override void Draw(GameTime gameTime)
         {

@@ -73,7 +73,7 @@ namespace AnimatedSprite
             Hbar = h;
         }
 
-        public virtual void follow(AnimateSheetSprite followed)
+        public virtual void Follow(AnimateSheetSprite followed)
         {
             // Only rotate towards the player if he enters the field of View
             if (followed.BoundingRectangle.Intersects(Range))
@@ -81,7 +81,7 @@ namespace AnimatedSprite
 
         }
 
-        public void followPosition(Vector2 Pos)
+        public void FollowPosition(Vector2 Pos)
         {
 
             angleOfRotation = TurnToFace(Pos, PixelPosition, angleOfRotation, rotationSpeed);
@@ -93,6 +93,7 @@ namespace AnimatedSprite
             // The difference in the two points is 
             float x = faceThis.X - position.X;
             float y = faceThis.Y - position.Y;
+
             // ArcTan calculates the angle of rotation 
             // relative to a point (the gun turret position)
             // in the positive x plane and 
@@ -104,7 +105,6 @@ namespace AnimatedSprite
 
             return WrapAngle(currentAngle + difference);
         }
-
 
         public override void Update(GameTime gametime)
         {
@@ -122,6 +122,7 @@ namespace AnimatedSprite
                 Hbar.draw(Game.Services.GetService<SpriteBatch>());
             base.Draw(gameTime);
         }
+
         /// <summary>
         /// Returns the angle expressed in radians between -Pi and Pi.
         /// Angle is always positive
