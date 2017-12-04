@@ -75,13 +75,12 @@ namespace TileBasedPlayer20172018
 
             Services.AddService(new TilePlayer(this, new Vector2(64, 128), new List<TileRef>()
             {
-                new TileRef(15, 2, 0),
-                new TileRef(15, 3, 0),
-                new TileRef(15, 4, 0),
-                new TileRef(15, 5, 0),
-                new TileRef(15, 6, 0),
-                new TileRef(15, 7, 0),
-                new TileRef(15, 8, 0),
+                new TileRef(10, 0, 0),
+            }, 64, 64, 0f));
+
+            Services.AddService(new TilePlayerHead(this, new Vector2(64, 128), new List<TileRef>()
+            {
+                new TileRef(10, 1, 0),
             }, 64, 64, 0f));
 
             SetColliders(TileType.BLUESTEEL);
@@ -96,14 +95,14 @@ namespace TileBasedPlayer20172018
 
             // Add SpriteBatch to services, it can be called anywhere.
             Services.AddService(spriteBatch);
-            Services.AddService(Content.Load<Texture2D>(@"Tiles/tank tiles 64 x 64"));
+            Services.AddService(Content.Load<Texture2D>(@"Tiles/tilesheet"));
 
             // Tile References to be drawn on the Map corresponding to the entries in the defined 
             // Tile Map
-            TileRefs.Add(new TileRef(4, 2, 0));
-            TileRefs.Add(new TileRef(3, 3, 1));
-            TileRefs.Add(new TileRef(6, 3, 2));
-            TileRefs.Add(new TileRef(6, 2, 3));
+            TileRefs.Add(new TileRef(3, 2, 0)); // Metal Box
+            TileRefs.Add(new TileRef(4, 1, 1)); // Ground
+            TileRefs.Add(new TileRef(1, 2, 2)); // Metal Box 2
+            TileRefs.Add(new TileRef(6, 1, 3)); // 
             TileRefs.Add(new TileRef(0, 2, 4));
 
             new SimpleTileLayer(this, backTileNames, tileMap, TileRefs, tileWidth, tileHeight);

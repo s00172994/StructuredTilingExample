@@ -50,7 +50,7 @@ namespace Tiling
             string[] tileNames, int[,] tileMap,
                         List<TileRef> _tileRefs, int tileWidth, int tileHeight) : base(game)
         {
-            _tileSheet = Game.Content.Load<Texture2D>(@"Tiles\tank tiles 64 x 64");
+            _tileSheet = Game.Content.Load<Texture2D>(@"Tiles\tilesheet");
             DrawOrder = 0;
             game.Components.Add(this);
             int tileMapHeight = tileMap.GetLength(0); // row int[row,col]

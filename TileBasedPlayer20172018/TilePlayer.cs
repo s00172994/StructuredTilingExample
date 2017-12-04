@@ -10,7 +10,6 @@ using Tiling;
 
 namespace Tiler
 {
-
     public class TilePlayer : RotatingSprite
     {
         //List<TileRef> images = new List<TileRef>() { new TileRef(15, 2, 0) };
@@ -23,7 +22,8 @@ namespace Tiler
         Vector2 Deceleration = new Vector2(0.08f);
 
         public Vector2 Direction;
-        public Vector2 previousPosition;
+        public Vector2 PreviousPosition;
+        public Vector2 CentrePos;
 
         public TilePlayer(Game game, Vector2 userPosition,
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
@@ -35,12 +35,13 @@ namespace Tiler
         public void Collision(Collider c)
         {
             if (BoundingRectangle.Intersects(c.CollisionField))
-                PixelPosition = previousPosition;
+                PixelPosition = PreviousPosition;
         }
 
         public override void Update(GameTime gameTime)
         {
-            previousPosition = PixelPosition;
+            CentrePos = PixelPosition + new Vector2((FrameWidth / 2), (FrameHeight / 2));
+            PreviousPosition = PixelPosition;
 
             Movement();
 

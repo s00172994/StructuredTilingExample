@@ -52,6 +52,7 @@
     <Compile Include="RotatingSprite.cs" />
     <Compile Include="SimpleTileLayer.cs" />
     <Compile Include="Sprite.cs" />
+    <Compile Include="TilePlayerHead.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TilePlayer.cs" />
     <Compile Include="TileRef.cs" />
@@ -65,7 +66,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Tiles\tank tiles 64 x 64.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

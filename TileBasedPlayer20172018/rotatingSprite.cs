@@ -13,13 +13,13 @@ namespace AnimatedSprite
 {
     public class RotatingSprite : AnimateSheetSprite
     {
-
         int health = 100;
         protected int DamageRate = 1; // The rate at which this object reduces the health of others
         protected int DamageSustainedRate = 1; // The rate at which this object takes on damage
         private Rectangle range;
         protected int tileRangeDistance = 4;
         protected float rotationSpeed = .5f;
+
         public Rectangle Range
         {
             get
@@ -123,10 +123,8 @@ namespace AnimatedSprite
             base.Draw(gameTime);
         }
 
-        /// <summary>
-        /// Returns the angle expressed in radians between -Pi and Pi.
-        /// Angle is always positive
-        /// </summary>
+        // Returns the angle expressed in radians between -Pi and Pi.
+        // Angle is always positive
         private static float WrapAngle(float radians)
         {
             while (radians < -MathHelper.Pi)

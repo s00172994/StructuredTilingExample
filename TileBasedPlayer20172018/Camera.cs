@@ -52,11 +52,9 @@ namespace CameraNS
         {
             TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
 
-            Vector2 playerCentrePos = player.PixelPosition + new Vector2((player.FrameWidth / 2), (player.FrameHeight / 2));
-
             if (player != null)
             {
-                Follow(playerCentrePos + (player.Direction * CameraSpread), Game.GraphicsDevice.Viewport, CameraSpeed);
+                Follow(player.CentrePos + (player.Direction * CameraSpread), Game.GraphicsDevice.Viewport, CameraSpeed);
 
                 #region Clamp player within bounds
                 player.PixelPosition = Vector2.Clamp(player.PixelPosition, Vector2.Zero,

@@ -49,7 +49,7 @@ namespace Tiler
             else
             {
                 if (p.BoundingRectangle.Intersects(CollisionField))
-                    p.PixelPosition = p.previousPosition;
+                    p.PixelPosition = p.PreviousPosition;
             }
 
             base.Update(gameTime);

@@ -183,8 +183,8 @@ namespace AnimatedSprite
         public override void Draw(GameTime gameTime)
         {
             SpriteBatch spriteBatch = Game.Services.GetService<SpriteBatch>();
-            // Could do Texture2D as a static class with dictionary of textures
-            // if different textures needed
+
+            // This means you can only use one spritesheet in the entire game, to save on resources
             Texture2D SpriteSheet = Game.Services.GetService<Texture2D>();
 
             if (visible)
