@@ -13,7 +13,7 @@ namespace AnimatedSprite
     public class AnimateSheetSprite : DrawableGameComponent
     {
         //sprite texture and position
-        
+
         private bool visible = true;
         protected Vector2 origin;
         protected float angleOfRotation;
@@ -42,17 +42,17 @@ namespace AnimatedSprite
             }
         }
 
-        //the number of frames in the sprite sheet
-        //the current fram in the animation
-        //the time between frames
+        // The number of frames in the sprite sheet
+        // The current fram in the animation
+        // The time between frames
         int mililsecondsBetweenFrames = 100;
         float timer = 0f;
 
-        //the width and height of our texture
+        // The width and height of our texture
         public int FrameWidth = 0;
         public int FrameHeight = 0;
 
-        //the source of our image within the sprite sheet to draw
+        // The source of our image within the sprite sheet to draw
         Rectangle sourceRectangle;
 
         public Rectangle SourceRectangle
@@ -61,7 +61,7 @@ namespace AnimatedSprite
             set { sourceRectangle = value; }
         }
 
-        
+
         public Vector2 PixelPosition
         {
             get
@@ -106,7 +106,7 @@ namespace AnimatedSprite
             get
             {
                 return new Rectangle(PixelPosition.ToPoint(),
-                    new Point(FrameWidth , FrameHeight ));
+                    new Point(FrameWidth, FrameHeight));
             }
 
             set
@@ -117,7 +117,7 @@ namespace AnimatedSprite
 
         protected List<TileRef> Frames = new List<TileRef>();
         private int _currentFrame;
-        
+
         public AnimateSheetSprite(Game g, Vector2 userPosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth) : base(g)
         {
             spriteDepth = layerDepth;
@@ -127,7 +127,7 @@ namespace AnimatedSprite
             FrameWidth = frameWidth;
             Frames = sheetRefs;
             // added to allow sprites to rotate
-            origin = new Vector2(FrameWidth / 2, FrameHeight/ 2);
+            origin = new Vector2(FrameWidth / 2, FrameHeight / 2);
             angleOfRotation = 0;
             CurrentFrame = 0;
             g.Components.Add(this);
@@ -139,23 +139,23 @@ namespace AnimatedSprite
             timer += (float)gametime.ElapsedGameTime.Milliseconds;
 
             //if the timer is greater then the time between frames, then animate
-                    if (timer > mililsecondsBetweenFrames)
-                    {
-                        _currentFrame++;
-                        //if we have exceed the number of frames
-                        if (_currentFrame > Frames.Count -1 )
-                        {
-                           _currentFrame = 0;
-                        }
-                        //reset our timer
-                        timer = 0f;
-                    }
-            //set the source to be the current frame in our animation
-                sourceRectangle = new Rectangle(Frames[CurrentFrame]._sheetPosX * FrameWidth  , 
-                        Frames[CurrentFrame]._sheetPosY * FrameHeight, 
-                        FrameWidth, FrameHeight);
-            
+            if (timer > mililsecondsBetweenFrames)
+            {
+                _currentFrame++;
+                //if we have exceed the number of frames
+                if (_currentFrame > Frames.Count - 1)
+                {
+                    _currentFrame = 0;
+                }
+                //reset our timer
+                timer = 0f;
             }
+            //set the source to be the current frame in our animation
+            sourceRectangle = new Rectangle(Frames[CurrentFrame]._sheetPosX * FrameWidth,
+                    Frames[CurrentFrame]._sheetPosY * FrameHeight,
+                    FrameWidth, FrameHeight);
+
+        }
         public bool collisionDetect(AnimateSheetSprite other)
         {
             Rectangle myBound = new Rectangle((int)this.PixelPosition.X, (int)this.PixelPosition.Y, this.FrameWidth, this.FrameHeight);
@@ -166,9 +166,9 @@ namespace AnimatedSprite
 
         public bool TileCollision(Tile other)
         {
-            Rectangle myBound = new Rectangle((int)this.PixelPosition.X , (int)this.PixelPosition.Y, this.FrameWidth , this.FrameHeight);
-            Rectangle otherBound = new Rectangle((int)other.X*other.TileWidth, (int)other.Y*other.TileHeight, other.TileWidth, other.TileHeight);
-            
+            Rectangle myBound = new Rectangle((int)this.PixelPosition.X, (int)this.PixelPosition.Y, this.FrameWidth, this.FrameHeight);
+            Rectangle otherBound = new Rectangle((int)other.X * other.TileWidth, (int)other.Y * other.TileHeight, other.TileWidth, other.TileHeight);
+
             return myBound.Intersects(otherBound);
         }
 
@@ -186,13 +186,13 @@ namespace AnimatedSprite
             // Could do Texture2D as a static class with dictionary of textures
             // if different textures needed
             Texture2D SpriteSheet = Game.Services.GetService<Texture2D>();
-            
+
             if (visible)
             {
                 spriteBatch.Begin(SpriteSortMode.Immediate,
                         BlendState.AlphaBlend, null, null, null, null, Camera.CurrentCameraTranslation);
                 spriteBatch.Draw(SpriteSheet,
-                    PixelPosition + origin, 
+                    PixelPosition + origin,
                     sourceRectangle,
                     Color.White, angleOfRotation, origin,
                     Scale, SpriteEffects.None, spriteDepth);

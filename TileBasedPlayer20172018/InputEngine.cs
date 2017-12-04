@@ -185,9 +185,9 @@ namespace Engine.Engines
 
         private void CheckForTextInput()
         {
-            foreach(var key in Enum.GetValues(typeof(Keys)) as Keys[])
+            foreach (var key in Enum.GetValues(typeof(Keys)) as Keys[])
             {
-                if(IsKeyPressed(key))
+                if (IsKeyPressed(key))
                 {
                     KeysPressedInLastFrame.Add(key.ToString());
                     break;
@@ -269,7 +269,7 @@ namespace Engine.Engines
         {
             if (currentMouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed)
                 return true;
-            else 
+            else
                 return false;
         }
 

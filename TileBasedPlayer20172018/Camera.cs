@@ -17,6 +17,7 @@ namespace CameraNS
         static Vector2 _camPos = Vector2.Zero;
         static Vector2 _worldBound;
         public float CameraSpeed = 0.03f;
+        public float CameraSpread = 120f;
 
         public static Matrix CurrentCameraTranslation
         {
@@ -51,9 +52,11 @@ namespace CameraNS
         {
             TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
 
+            Vector2 playerCentrePos = player.PixelPosition + new Vector2((player.FrameWidth / 2), (player.FrameHeight / 2));
+
             if (player != null)
             {
-                Follow(player.PixelPosition, Game.GraphicsDevice.Viewport, CameraSpeed);
+                Follow(playerCentrePos + (player.Direction * CameraSpread), Game.GraphicsDevice.Viewport, CameraSpeed);
 
                 #region Clamp player within bounds
                 player.PixelPosition = Vector2.Clamp(player.PixelPosition, Vector2.Zero,
