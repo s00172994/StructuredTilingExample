@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="Collider.cs" />
+    <Compile Include="Crosshair.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="HealthBar.cs" />
     <Compile Include="InputEngine.cs" />
@@ -51,8 +52,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RotatingSprite.cs" />
     <Compile Include="SimpleTileLayer.cs" />
-    <Compile Include="Sprite.cs" />
-    <Compile Include="TilePlayerHead.cs" />
+    <Compile Include="AnimatedSprite.cs" />
+    <Compile Include="TilePlayerTurret.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TilePlayer.cs" />
     <Compile Include="TileRef.cs" />

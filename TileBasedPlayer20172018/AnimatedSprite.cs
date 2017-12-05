@@ -12,12 +12,10 @@ namespace AnimatedSprite
 {
     public class AnimateSheetSprite : DrawableGameComponent
     {
-        //sprite texture and position
-
         private bool visible = true;
         protected Vector2 origin;
         protected float angleOfRotation;
-        protected float spriteDepth = 1f;
+        protected float spriteDepth = 6f;
         private float scale = 1f;
         private Vector2 _pixelPosition;
         private Rectangle boundingRectangle;
@@ -190,7 +188,7 @@ namespace AnimatedSprite
             if (visible)
             {
                 spriteBatch.Begin(SpriteSortMode.Immediate,
-                        BlendState.AlphaBlend, null, null, null, null, Camera.CurrentCameraTranslation);
+                        BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Camera.CurrentCameraTranslation);
                 spriteBatch.Draw(SpriteSheet,
                     PixelPosition + origin,
                     sourceRectangle,

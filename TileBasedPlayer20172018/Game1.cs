@@ -14,14 +14,14 @@ namespace TileBasedPlayer20172018
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int tileWidth = 64;
-        int tileHeight = 64;
-
         List<TileRef> TileRefs = new List<TileRef>();
         List<Collider> colliders = new List<Collider>();
 
         string[] backTileNames = { "blueBox", "pavement", "blueSteel", "greenBox", "home" };
         public enum TileType { BLUEBOX, PAVEMENT, BLUESTEEL, GREENBOX, HOME };
+
+        int tileWidth = 64;
+        int tileHeight = 64;
 
         #region Tile Map
         int[,] tileMap = new int[,]
@@ -52,12 +52,13 @@ namespace TileBasedPlayer20172018
         {
             graphics = new GraphicsDeviceManager(this);
 
-            //graphics.PreferredBackBufferWidth = 1280;
-            //graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferMultiSampling = false;
             graphics.SynchronizeWithVerticalRetrace = true;
             graphics.ApplyChanges();
 
-            IsMouseVisible = true;
+            IsMouseVisible = false;
             IsFixedTimeStep = true;
 
             Window.Title = "Tile Based Tank Game - 2D Game Programming Assignment";
@@ -78,10 +79,15 @@ namespace TileBasedPlayer20172018
                 new TileRef(10, 0, 0),
             }, 64, 64, 0f));
 
-            Services.AddService(new TilePlayerHead(this, new Vector2(64, 128), new List<TileRef>()
+            Services.AddService(new TilePlayerTurret(this, new Vector2(64, 128), new List<TileRef>()
             {
                 new TileRef(10, 1, 0),
             }, 64, 64, 0f));
+
+            new Crosshair(this, new Vector2(0, 0), new List<TileRef>()
+            {
+                new TileRef(10, 3, 0),
+            }, 64, 64, 0f);
 
             SetColliders(TileType.BLUESTEEL);
             SetColliders(TileType.BLUEBOX);
@@ -143,7 +149,7 @@ namespace TileBasedPlayer20172018
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.TransparentBlack);
+            GraphicsDevice.Clear(Color.Transparent);
 
             base.Draw(gameTime);
         }

@@ -54,7 +54,7 @@ namespace CameraNS
 
             if (player != null)
             {
-                Follow(player.CentrePos + (player.Direction * CameraSpread), Game.GraphicsDevice.Viewport, CameraSpeed);
+                Follow((player.CentrePos + (player.Direction * CameraSpread)), Game.GraphicsDevice.Viewport, CameraSpeed);
 
                 #region Clamp player within bounds
                 player.PixelPosition = Vector2.Clamp(player.PixelPosition, Vector2.Zero,
@@ -68,8 +68,10 @@ namespace CameraNS
 
         public static void Follow(Vector2 followPos, Viewport v, float cameraSpeed)
         {
+            // Center of Viewport
+            Vector2 centerScreen = new Vector2(v.Width / 2, v.Height / 2);
             // Add smoothness
-            Vector2 delta = (followPos - new Vector2(v.Width / 2, v.Height / 2)) - _camPos; // Distance from following position to camera
+            Vector2 delta = ((followPos - centerScreen) - _camPos); // Distance from following position to camera
             _camPos += Vector2.Multiply(delta, cameraSpeed); // Now move the camera by 3%
             _camPos = Vector2.Clamp(_camPos, Vector2.Zero, _worldBound - new Vector2(v.Width, v.Height));
         }

@@ -5,14 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 using Engine.Engines;
 using AnimatedSprite;
 using Tiling;
+using CameraNS;
 
 namespace Tiler
 {
-    class TilePlayerHead : RotatingSprite
+    class TilePlayerTurret : RotatingSprite
     {
         float turnSpeed = 0.04f;
         const float WIDTH_IN = 11f; // Width in from the left for the sprites origin
@@ -21,7 +23,7 @@ namespace Tiler
         public Vector2 CentrePos;
         private Vector2 originToRotate;
 
-        public TilePlayerHead(Game game, Vector2 userPosition,
+        public TilePlayerTurret(Game game, Vector2 userPosition,
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
                 : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
@@ -34,14 +36,14 @@ namespace Tiler
         {
             TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
 
-            CentrePos = PixelPosition + new Vector2(FrameWidth, FrameHeight);
+            CentrePos = PixelPosition + new Vector2(FrameWidth / 2, FrameHeight / 2);
 
             if (player != null)
             {
-                Track(player.PixelPosition + new Vector2(13f, 0f));
+                Track(player.PixelPosition + new Vector2(WIDTH_IN, 0f));
             }
 
-            this.angleOfRotation = TurnToFace(this.CentrePos, InputEngine.MousePosition, this.angleOfRotation, turnSpeed);
+            this.angleOfRotation = TurnToFace(this.CentrePos, (InputEngine.MousePosition + Camera.CamPos), this.angleOfRotation, turnSpeed);
 
             Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
 
