@@ -74,23 +74,62 @@ namespace TileBasedPlayer20172018
 
             new InputEngine(this);
 
-            Services.AddService(new TilePlayer(this, new Vector2(64, 128), new List<TileRef>()
+            #region Create Player Tank
+            TilePlayer tankPlayer = new TilePlayer(this, new Vector2(64, 128), new List<TileRef>()
             {
                 new TileRef(10, 0, 0),
-            }, 64, 64, 0f));
+            }, 64, 64, 0f);
 
-            Services.AddService(new TilePlayerTurret(this, new Vector2(64, 128), new List<TileRef>()
+            TilePlayerTurret tankPlayerTurret = new TilePlayerTurret(this, new Vector2(64, 128), new List<TileRef>()
             {
                 new TileRef(10, 1, 0),
-            }, 64, 64, 0f));
+            }, 64, 64, 0f);
+
+            // Add Projectile
+            Projectile bullet = new Projectile(this, tankPlayer.PixelPosition, new List<TileRef>()
+            {
+                new TileRef(10, 2, 0),
+            }, 64, 64, 0f);
+
+            tankPlayerTurret.AddProjectile(bullet);
+
+            Services.AddService(tankPlayer);
+            Services.AddService(tankPlayerTurret);
+            #endregion
+
+            #region Create Sentry Tanks
+
+            Sentry enemyOne = new Sentry(this, new Vector2(320, 128), new List<TileRef>()
+            {
+                new TileRef(10, 4, 0),
+            }, 64, 64, 0f, "Enemy Tank 1");
+
+            Sentry enemyTwo = new Sentry(this, new Vector2(420, 128), new List<TileRef>()
+            {
+                new TileRef(10, 4, 0),
+            }, 64, 64, 0f, "Enemy Tank 2");
+
+            Services.AddService(enemyOne);
+
+            #region Create Sentry Tank Turrets
+            SentryTurret enemyTurretOne = new SentryTurret(this, new Vector2(128, 128), new List<TileRef>()
+            {
+                new TileRef(10, 5, 0),
+            }, 64, 64, 0f, "Enemy Tank 1");
+
+            Services.AddService(enemyTurretOne);
+
+            #endregion
+
+            #endregion
 
             new Crosshair(this, new Vector2(0, 0), new List<TileRef>()
             {
                 new TileRef(10, 3, 0),
             }, 64, 64, 0f);
 
-            SetColliders(TileType.BLUESTEEL);
-            SetColliders(TileType.BLUEBOX);
+            //SetColliders(TileType.BLUESTEEL);
+            //SetColliders(TileType.BLUEBOX);
 
             base.Initialize();
         }

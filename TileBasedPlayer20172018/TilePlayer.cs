@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using Tiling;
 
 namespace Tiler
@@ -23,7 +24,13 @@ namespace Tiler
 
         public Vector2 Direction;
         public Vector2 PreviousPosition;
-        public Vector2 CentrePos;
+        public Vector2 CentrePos
+        {
+            get
+            {
+                return PixelPosition + new Vector2(FrameWidth / 2, FrameHeight / 2);
+            }
+        }
 
         public TilePlayer(Game game, Vector2 userPosition,
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
@@ -40,7 +47,6 @@ namespace Tiler
 
         public override void Update(GameTime gameTime)
         {
-            CentrePos = PixelPosition + new Vector2((FrameWidth / 2), (FrameHeight / 2));
             PreviousPosition = PixelPosition;
 
             Movement();
@@ -80,6 +86,7 @@ namespace Tiler
                 this.angleOfRotation += turnSpeed;
             }
         }
+
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);

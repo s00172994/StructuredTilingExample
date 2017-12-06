@@ -10,7 +10,7 @@ using CameraNS;
 
 namespace AnimatedSprite
 {
-    public class AnimateSheetSprite : DrawableGameComponent
+    public class AnimateSheetSprite : DrawableGameComponent , ICloneable
     {
         private bool visible = true;
         protected Vector2 origin;
@@ -200,6 +200,9 @@ namespace AnimatedSprite
             base.Draw(gameTime);
         }
 
-
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

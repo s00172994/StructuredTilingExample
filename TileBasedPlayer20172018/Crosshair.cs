@@ -9,9 +9,9 @@ using Engine.Engines;
 using Tiling;
 using AnimatedSprite;
 
-namespace TileBasedPlayer20172018
+namespace Tiler
 {
-    class Crosshair : RotatingSprite
+    public class Crosshair : RotatingSprite
     {
         public Crosshair(Game game, Vector2 userPosition,
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
