@@ -17,7 +17,7 @@ namespace TileBasedPlayer20172018
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
                 : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
-            DrawOrder = 1;
+            DrawOrder = 100;
         }
 
         public override void Update(GameTime gameTime)

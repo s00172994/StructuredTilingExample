@@ -27,7 +27,7 @@ namespace Tiler
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
                 : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
-            DrawOrder = 1;
+            DrawOrder = 51;
             originToRotate = new Vector2(((FrameWidth / 2) - WIDTH_IN), (FrameHeight / 2));
             origin = originToRotate;
         }

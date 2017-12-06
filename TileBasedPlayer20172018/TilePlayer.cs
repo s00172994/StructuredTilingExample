@@ -29,7 +29,7 @@ namespace Tiler
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
                 : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
-            DrawOrder = 1;
+            DrawOrder = 50;
         }
 
         public void Collision(Collider c)
