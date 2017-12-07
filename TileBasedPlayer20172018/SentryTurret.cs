@@ -54,7 +54,7 @@ namespace Tiler
             Sentry sentry = (Sentry)Game.Services.GetService(typeof(Sentry));
 
             // Props this turret onto the appropiate tank body
-            if (this.Name == sentry.Name)
+            if (this.Name == sentry.Name && sentry != null)
             {
                 AddSelfToBody(sentry.PixelPosition + new Vector2(WIDTH_IN, 0f));
             }

@@ -86,10 +86,10 @@ namespace TileBasedPlayer20172018
             }, 64, 64, 0f);
 
             // Add Projectile
-            Projectile bullet = new Projectile(this, tankPlayer.PixelPosition, new List<TileRef>()
+            Projectile bullet = new Projectile(this, tankPlayer.CentrePos, new List<TileRef>()
             {
                 new TileRef(10, 2, 0),
-            }, 64, 64, 0f);
+            }, 64, 64, 0f, tankPlayerTurret.Direction);
 
             tankPlayerTurret.AddProjectile(bullet);
 
@@ -140,7 +140,7 @@ namespace TileBasedPlayer20172018
 
             // Add SpriteBatch to services, it can be called anywhere.
             Services.AddService(spriteBatch);
-            Services.AddService(Content.Load<Texture2D>(@"Tiles/tilesheet"));
+            Services.AddService(Content.Load<Texture2D>(@"tiles/tilesheet"));
 
             // Tile References to be drawn on the Map corresponding to the entries in the defined 
             // Tile Map
@@ -165,7 +165,7 @@ namespace TileBasedPlayer20172018
                     if (tileMap[y, x] == (int)t)
                     {
                         colliders.Add(new Collider(this,
-                            Content.Load<Texture2D>(@"Tiles/collider"),
+                            Content.Load<Texture2D>(@"tiles/collider"),
                             x, y
                             ));
                     }

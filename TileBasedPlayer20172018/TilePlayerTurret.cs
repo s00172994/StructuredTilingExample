@@ -20,8 +20,9 @@ namespace Tiler
         const float WIDTH_IN = 11f; // Width in from the left for the sprites origin
 
         public Projectile Bullet;
-
+        public Vector2 CrosshairPosition;
         public Vector2 Direction;
+
         public Vector2 CentrePos
         {
             get
@@ -29,6 +30,7 @@ namespace Tiler
                 return PixelPosition + new Vector2(FrameWidth / 2, FrameHeight / 2);
             }
         }
+
         private Vector2 originToRotate
         {
             get
@@ -49,16 +51,19 @@ namespace Tiler
         {
             TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
 
+            // Props this turret onto the underside tank body if it exists
             if (player != null)
             {
                 Track(player.PixelPosition + new Vector2(WIDTH_IN, 0f));
             }
 
-            this.angleOfRotation = TurnToFace(this.CentrePos, (InputEngine.MousePosition + Camera.CamPos), this.angleOfRotation, turnSpeed);
+            CrosshairPosition = (InputEngine.MousePosition + Camera.CamPos);
+
+            this.angleOfRotation = TurnToFace(this.CentrePos, CrosshairPosition, this.angleOfRotation, turnSpeed);
 
             Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
 
-            Shoot();
+            Reload();
 
             base.Update(gameTime);
         }
@@ -77,17 +82,20 @@ namespace Tiler
             Bullet = loadedBullet;
         }
 
-        public void Shoot()
+        public void Reload()
         {
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-            {
-                Bullet.IsActive = true;
-                Bullet.Direction = this.Direction;
-                Bullet.PixelPosition = this.CentrePos;
 
-                //projectile.Direction = this.Direction;
-                //projectile.PixelPosition = this.PixelPosition;
-                //projectile.IsActive = true;
+            if (Bullet != null && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle)
+            {
+                Bullet.PixelPosition = this.PixelPosition;
+            }
+            if (Bullet != null)
+            {
+                if (Mouse.GetState().LeftButton == ButtonState.Pressed
+                    && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle)
+                {
+                    Bullet.Shoot(CrosshairPosition - new Vector2(FrameWidth / 2, FrameHeight / 2));
+                }
             }
         }
     }
