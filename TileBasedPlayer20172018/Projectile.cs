@@ -44,9 +44,10 @@ namespace Tiler
         public Vector2 Direction;
 
         SoundEffect sndShoot;
+        SoundEffect sndExplosion;
 
         public Projectile(Game game, Vector2 projectilePosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, 
-            Vector2 direction, SoundEffect sndShootIn)
+            Vector2 direction, SoundEffect sndShootIn, SoundEffect sndExplosionIn)
             : base(game, projectilePosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Target = Vector2.Zero;
@@ -54,6 +55,7 @@ namespace Tiler
             DrawOrder = 40;
             StartPosition = projectilePosition;
             sndShoot = sndShootIn;
+            sndExplosion = sndExplosionIn;
         }
 
         public override void Update(GameTime gameTime)
@@ -70,6 +72,7 @@ namespace Tiler
                     if (Vector2.Distance(PixelPosition, Target) < 2)
                     {
                         projectileState = PROJECTILE_STATUS.Exploding;
+                        sndExplosion.Play();
                     }
                     break;
                 case PROJECTILE_STATUS.Exploding:

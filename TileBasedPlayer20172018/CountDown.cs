@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace TileBasedPlayer20172018
 {
     class CountDown : DrawableGameComponent
     {
+        private Song lose;
+        private Texture2D gameOverScreen;
         private SpriteFont CounterFont;
         private string text;
         private float time;
@@ -18,7 +22,7 @@ namespace TileBasedPlayer20172018
         private bool paused;
         private bool finished;
 
-        public CountDown(Game game, float startTime) : base(game)
+        public CountDown(Game game, float startTime, Texture2D gameOverScreenIn, Song loseIn) : base(game)
         {
             game.Components.Add(this);
             time = startTime;
@@ -27,6 +31,8 @@ namespace TileBasedPlayer20172018
             finished = false;
             Text = "";
             DrawOrder = 200;
+            gameOverScreen = gameOverScreenIn;
+            lose = loseIn;
         }
 
         #region Properties
@@ -89,7 +95,7 @@ namespace TileBasedPlayer20172018
             }
 
             Text = String.Format("{0}", Convert.ToInt32(time/1000));
-
+     
             base.Update(gameTime);  
         }
 
@@ -99,6 +105,11 @@ namespace TileBasedPlayer20172018
             SpriteBatch spriteBatch = Game.Services.GetService<SpriteBatch>();
             spriteBatch.Begin();
             spriteBatch.DrawString(Font, Text, Position, Color.White, 0f, new Vector2(0,0), 1f, SpriteEffects.None, 0f);
+            if (time <= 0)
+            {
+                spriteBatch.Draw(gameOverScreen, new Rectangle(0,0, Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height), Color.White);
+                MediaPlayer.Play(lose);
+            }
             spriteBatch.End();
 
         }
