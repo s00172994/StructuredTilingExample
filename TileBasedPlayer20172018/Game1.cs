@@ -24,6 +24,7 @@ namespace TileBasedPlayer20172018
 
         int tileWidth = 64;
         int tileHeight = 64;
+
         Song backgroundMusic;
 
         CountDown timer;
@@ -107,7 +108,7 @@ namespace TileBasedPlayer20172018
             Projectile bullet = new Projectile(this, tankPlayer.CentrePos, new List<TileRef>()
             {
                 new TileRef(10, 2, 0),
-            }, 64, 64, 0f, tankPlayerTurret.Direction);
+            }, 64, 64, 0f, tankPlayerTurret.Direction, Content.Load<SoundEffect>("shoot"));
 
             tankPlayerTurret.AddProjectile(bullet);
 
@@ -198,8 +199,6 @@ namespace TileBasedPlayer20172018
                     }
                 }
             } 
-
-           
         }
 
         protected override void UnloadContent()
@@ -211,8 +210,6 @@ namespace TileBasedPlayer20172018
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
-            
 
             base.Update(gameTime);
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -42,13 +43,17 @@ namespace Tiler
         public float Velocity = 0.25f;
         public Vector2 Direction;
 
-        public Projectile(Game game, Vector2 projectilePosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, Vector2 direction)
+        SoundEffect sndShoot;
+
+        public Projectile(Game game, Vector2 projectilePosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, 
+            Vector2 direction, SoundEffect sndShootIn)
             : base(game, projectilePosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Target = Vector2.Zero;
             Direction = direction;
             DrawOrder = 40;
             StartPosition = projectilePosition;
+            sndShoot = sndShootIn;
         }
 
         public override void Update(GameTime gameTime)
@@ -77,6 +82,7 @@ namespace Tiler
         {
             projectileState = PROJECTILE_STATUS.Firing;
             Target = CrosshairTarget;
+            sndShoot.Play();
         }
 
         public override void Draw(GameTime gameTime)
