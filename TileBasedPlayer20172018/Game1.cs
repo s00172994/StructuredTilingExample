@@ -85,7 +85,7 @@ namespace TileBasedPlayer20172018
                 new TileRef(10, 1, 0),
             }, 64, 64, 0f);
 
-            // Add Projectile
+            // Add Tank Projectile
             Projectile bullet = new Projectile(this, tankPlayer.CentrePos, new List<TileRef>()
             {
                 new TileRef(10, 2, 0),
