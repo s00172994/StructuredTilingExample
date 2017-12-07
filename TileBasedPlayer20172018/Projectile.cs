@@ -41,13 +41,15 @@ namespace Tiler
 
         public float Velocity = 0.25f;
         public Vector2 Direction;
+        private const float LIFE_SPAN = 2f; // In seconds
+        private float timer = 0f;
 
         public Projectile(Game game, Vector2 projectilePosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, Vector2 direction)
             : base(game, projectilePosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Target = Vector2.Zero;
             Direction = direction;
-            DrawOrder = 40;
+            DrawOrder = 50;
             StartPosition = projectilePosition;
         }
 
@@ -60,14 +62,22 @@ namespace Tiler
                     break;
                 case PROJECTILE_STATUS.Firing:
                     this.Visible = true;
+                    this.angleOfRotation = TurnToFace(PixelPosition, Target, angleOfRotation, 10f);
                     PixelPosition = Vector2.Lerp(PixelPosition, Target, Velocity);
-                    this.angleOfRotation = TurnToFace(PixelPosition, Target, angleOfRotation, 1f);
                     if (Vector2.Distance(PixelPosition, Target) < 2)
                     {
                         projectileState = PROJECTILE_STATUS.Exploding;
                     }
                     break;
                 case PROJECTILE_STATUS.Exploding:
+                    this.Visible = false;
+                    timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    if (timer > LIFE_SPAN)
+                    {
+                        // Reload Projectile
+                        projectileState = PROJECTILE_STATUS.Idle;
+                    }
                     break;
             }
             base.Update(gameTime);

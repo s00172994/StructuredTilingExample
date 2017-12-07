@@ -16,8 +16,9 @@ namespace Tiler
 {
     class TilePlayerTurret : RotatingSprite
     {
-        float turnSpeed = 0.04f;
-        const float WIDTH_IN = 11f; // Width in from the left for the sprites origin
+        private float turnSpeed = 0.04f;
+        private const float WIDTH_IN = 11f; // Width in from the left for the sprites origin
+        private float angleOfRotationPrev;
 
         public Projectile Bullet;
         public Vector2 CrosshairPosition;
@@ -39,11 +40,11 @@ namespace Tiler
             }
         }
 
-        public TilePlayerTurret(Game game, Vector2 userPosition,
+        public TilePlayerTurret(Game game, Vector2 playerPosition,
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
-                : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
+                : base(game, playerPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
-            DrawOrder = 51;
+            DrawOrder = 55;
             origin = originToRotate;
         }
 
@@ -57,9 +58,11 @@ namespace Tiler
                 Track(player.PixelPosition + new Vector2(WIDTH_IN, 0f));
             }
 
-            CrosshairPosition = (InputEngine.MousePosition + Camera.CamPos);
+            CrosshairPosition = ((InputEngine.MousePosition) + Camera.CamPos);
 
-            this.angleOfRotation = TurnToFace(this.CentrePos, CrosshairPosition, this.angleOfRotation, turnSpeed);
+            angleOfRotationPrev = this.angleOfRotation;
+
+            this.angleOfRotation = TurnToFace(this.CentrePos - new Vector2(WIDTH_IN, 0f), CrosshairPosition, this.angleOfRotation, turnSpeed);
 
             Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
 
@@ -87,12 +90,13 @@ namespace Tiler
 
             if (Bullet != null && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle)
             {
-                Bullet.PixelPosition = this.PixelPosition;
+                Bullet.PixelPosition = (this.PixelPosition - new Vector2(WIDTH_IN, 0));
             }
             if (Bullet != null)
             {
                 if (Mouse.GetState().LeftButton == ButtonState.Pressed
-                    && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle)
+                    && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle
+                    && this.angleOfRotation != 0 && Math.Round(this.angleOfRotationPrev,2) == Math.Round(this.angleOfRotation,2))
                 {
                     Bullet.Shoot(CrosshairPosition - new Vector2(FrameWidth / 2, FrameHeight / 2));
                 }

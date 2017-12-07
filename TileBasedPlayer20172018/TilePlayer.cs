@@ -32,11 +32,11 @@ namespace Tiler
             }
         }
 
-        public TilePlayer(Game game, Vector2 userPosition,
+        public TilePlayer(Game game, Vector2 startPosition,
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
-                : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
+                : base(game, startPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
-            DrawOrder = 50;
+            DrawOrder = 45;
         }
 
         public void Collision(Collider c)
