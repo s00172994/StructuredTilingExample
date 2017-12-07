@@ -65,6 +65,8 @@ namespace Tiler
             this.angleOfRotation = TurnToFace(this.CentrePos - new Vector2(WIDTH_IN, 0f), CrosshairPosition, this.angleOfRotation, turnSpeed);
 
             Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
+            // Send this direction to the projectiles for update
+            Bullet.GetDirection(Direction);
 
             Reload();
 
@@ -87,11 +89,11 @@ namespace Tiler
 
         public void Reload()
         {
-
             if (Bullet != null && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle)
             {
                 Bullet.PixelPosition = (this.PixelPosition - new Vector2(WIDTH_IN, 0));
             }
+
             if (Bullet != null)
             {
                 if (Mouse.GetState().LeftButton == ButtonState.Pressed

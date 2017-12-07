@@ -39,9 +39,9 @@ namespace Tiler
             }
         }
 
-        public float Velocity = 0.25f;
+        public int Velocity = 50;
         public Vector2 Direction;
-        private const float LIFE_SPAN = 2f; // In seconds
+        private const float LIFE_SPAN = 2f; // Explosion life in seconds
         private float timer = 0f;
 
         public Projectile(Game game, Vector2 projectilePosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, Vector2 direction)
@@ -58,17 +58,39 @@ namespace Tiler
             switch (projectileState)
             {
                 case PROJECTILE_STATUS.Idle:
-                    this.Visible = false;
+                    this.Visible = true;
                     break;
+
                 case PROJECTILE_STATUS.Firing:
                     this.Visible = true;
                     this.angleOfRotation = TurnToFace(PixelPosition, Target, angleOfRotation, 10f);
-                    PixelPosition = Vector2.Lerp(PixelPosition, Target, Velocity);
-                    if (Vector2.Distance(PixelPosition, Target) < 2)
+
+                    this.PixelPosition += (Direction * Velocity);
+
+                    #region Collision Checking
+                    //if (this.PixelPosition == )
+                    // Check to see if it's in the wrong place or (SIMPLY) out of map bounds
+                    // THEN explode
+                    // So that our bullet returns! =)
+
+                    // Reference Sentry
+                    SentryTurret otherSentry = (SentryTurret)Game.Services.GetService(typeof(SentryTurret));
+                    // Check collision with Sentry
+                    if (collisionDetect(otherSentry))
                     {
                         projectileState = PROJECTILE_STATUS.Exploding;
                     }
+                    #endregion
+
+                    //// Old smooth point to point projectile movement, doesn't move beyond target
+                    //PixelPosition = Vector2.Lerp(PixelPosition, Target, Velocity);
+
+                    //if (Vector2.Distance(PixelPosition, Target) < Velocity * 2)
+                    //{
+                    //    projectileState = PROJECTILE_STATUS.Exploding;
+                    //}
                     break;
+
                 case PROJECTILE_STATUS.Exploding:
                     this.Visible = false;
                     timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -83,10 +105,15 @@ namespace Tiler
             base.Update(gameTime);
         }
 
-        public void Shoot(Vector2 CrosshairTarget)
+        public void GetDirection(Vector2 TilePlayerTurretDirection)
+        {
+            Direction = TilePlayerTurretDirection;
+        }
+
+        public void Shoot(Vector2 TargetDirection)
         {
             projectileState = PROJECTILE_STATUS.Firing;
-            Target = CrosshairTarget;
+            Target = TargetDirection;
         }
 
         public override void Draw(GameTime gameTime)

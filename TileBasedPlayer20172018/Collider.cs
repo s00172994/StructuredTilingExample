@@ -12,7 +12,6 @@ namespace Tiler
 
     public class Collider : DrawableGameComponent
     {
-
         public int tileX;
         public int tileY;
         public Texture2D texture;
@@ -26,6 +25,7 @@ namespace Tiler
             }
 
         }
+
         public Rectangle CollisionField
         {
             get
@@ -34,6 +34,7 @@ namespace Tiler
             }
 
         }
+
         public Collider(Game game, Texture2D tx, int tlx, int tly) : base(game)
         {
             game.Components.Add(this);
@@ -42,6 +43,7 @@ namespace Tiler
             tileY = tly;
             DrawOrder = 2;
         }
+
         public override void Update(GameTime gameTime)
         {
             TilePlayer p = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
@@ -49,11 +51,13 @@ namespace Tiler
             else
             {
                 if (p.BoundingRectangle.Intersects(CollisionField))
+                {
                     p.PixelPosition = p.PreviousPosition;
+                }
             }
-
             base.Update(gameTime);
         }
+
         public override void Draw(GameTime gameTime)
         {
             SpriteBatch spriteBatch = Game.Services.GetService<SpriteBatch>();
@@ -66,6 +70,7 @@ namespace Tiler
 
             base.Draw(gameTime);
         }
+
         public void Draw(SpriteBatch sp)
         {
             if (visible)

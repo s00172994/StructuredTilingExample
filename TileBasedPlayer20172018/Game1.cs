@@ -15,7 +15,7 @@ namespace TileBasedPlayer20172018
         SpriteBatch spriteBatch;
 
         List<TileRef> TileRefs = new List<TileRef>();
-        List<Collider> colliders = new List<Collider>();
+        List<Collider> Colliders = new List<Collider>();
 
         string[] backTileNames = { "blueBox", "pavement", "blueSteel", "greenBox", "home" };
         public enum TileType { BLUEBOX, PAVEMENT, BLUESTEEL, GREENBOX, HOME };
@@ -86,7 +86,7 @@ namespace TileBasedPlayer20172018
             }, 64, 64, 0f);
 
             // Add Tank Projectile
-            Projectile bullet = new Projectile(this, tankPlayer.CentrePos, new List<TileRef>()
+            Projectile bullet = new Projectile(this, tankPlayerTurret.CentrePos, new List<TileRef>()
             {
                 new TileRef(10, 2, 0),
             }, 64, 64, 0f, tankPlayerTurret.Direction);
@@ -164,7 +164,7 @@ namespace TileBasedPlayer20172018
                 {
                     if (tileMap[y, x] == (int)t)
                     {
-                        colliders.Add(new Collider(this,
+                        Colliders.Add(new Collider(this,
                             Content.Load<Texture2D>(@"tiles/collider"),
                             x, y
                             ));

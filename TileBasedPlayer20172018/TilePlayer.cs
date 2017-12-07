@@ -20,7 +20,7 @@ namespace Tiler
         Vector2 Velocity = new Vector2(0,0);
         Vector2 MaxVelocity = new Vector2(2.5f, 2.5f);
         Vector2 Acceleration = new Vector2(0.1f);
-        Vector2 Deceleration = new Vector2(0.08f);
+        public Vector2 Deceleration = new Vector2(0.08f);
 
         public Vector2 Direction;
         public Vector2 PreviousPosition;

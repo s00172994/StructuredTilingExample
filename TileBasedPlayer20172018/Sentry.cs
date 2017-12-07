@@ -26,9 +26,9 @@ namespace Tiler
         }
         public string Name;
 
-        public Sentry(Game game, Vector2 userPosition,
+        public Sentry(Game game, Vector2 startPosition,
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, string nameIn)
-                : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
+                : base(game, startPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Name = nameIn;
             DrawOrder = 3;
