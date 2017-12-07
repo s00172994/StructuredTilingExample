@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TileBasedPlayer20172018
 {
-    class CountDown : GameComponent
+    class CountDown : DrawableGameComponent
     {
         private SpriteFont CounterFont;
         private string text;
@@ -20,11 +20,13 @@ namespace TileBasedPlayer20172018
 
         public CountDown(Game game, float startTime) : base(game)
         {
+            game.Components.Add(this);
             time = startTime;
-            started = false;
+            started = true;
             paused = false;
             finished = false;
             Text = "";
+            DrawOrder = 200;
         }
 
         #region Properties
@@ -59,18 +61,17 @@ namespace TileBasedPlayer20172018
             set { finished = value; }
         }
 
-        public Vector2 Posistion
+        public Vector2 Position
         {
             get { return position; }
             set { position = value; }
         }
 
-
         #endregion
 
         public override void Update(GameTime gameTime)
         {
-            float delataTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float deltaTime = (float)gameTime.ElapsedGameTime.Milliseconds;
 
             if (started)
             {
@@ -78,24 +79,28 @@ namespace TileBasedPlayer20172018
                 {
                     if (time > 0)
                     {
-                        time -= delataTime;
+                        time -= deltaTime;
                     }
                     else
                     {
                         finished = true;
                     }
                 }
-
-                
             }
-            Text = time.ToString();
+
+            Text = String.Format("{0}", Convert.ToInt32(time/1000));
 
             base.Update(gameTime);  
         }
 
-        public void Draw(SpriteBatch sprite)
+
+        public override void Draw(GameTime gameTime)
         {
-            sprite.DrawString(Font, Text, Posistion, Color.White, 0f, new Vector2(0,0), 0f, SpriteEffects.None, 200f);
+            SpriteBatch spriteBatch = Game.Services.GetService<SpriteBatch>();
+            spriteBatch.Begin();
+            spriteBatch.DrawString(Font, Text, Position, Color.White, 0f, new Vector2(0,0), 1f, SpriteEffects.None, 0f);
+            spriteBatch.End();
+
         }
     }
 }

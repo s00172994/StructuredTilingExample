@@ -80,10 +80,11 @@ namespace Tiling
         }
         public override void Draw(GameTime gameTime)
         {
+            
             if (_tileSheet == null) return;
             SpriteBatch sp = Game.Services.GetService<SpriteBatch>();
-            //Texture2D tx = Game.Services.GetService<Texture2D>();
-            //SpriteFont font = Game.Services.GetService<SpriteFont>();
+            Texture2D tx = Game.Services.GetService<Texture2D>();
+           SpriteFont font = Game.Services.GetService<SpriteFont>();
 
             // Draw the tiles
             sp.Begin(SpriteSortMode.Immediate,

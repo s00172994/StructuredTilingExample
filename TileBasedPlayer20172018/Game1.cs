@@ -168,14 +168,15 @@ namespace TileBasedPlayer20172018
             TileRefs.Add(new TileRef(5, 0, 3)); // Ground 2
             TileRefs.Add(new TileRef(5, 1, 4)); // groud 3
 
-            timer = new CountDown(this, 100.0f);
+            timer = new CountDown(this, 100000.00f);
             timer.Font = Content.Load<SpriteFont>("count");
-            timer.Posistion = new Vector2(this.Window.ClientBounds.Width / 2 - timer.Font.MeasureString(timer.Text).X / 2, 0);
-            Components.Add(timer);
+            timer.Position = new Vector2(this.Window.ClientBounds.Width / 2 - timer.Font.MeasureString(timer.Text).X / 2, 0);
+            //Components.Add(timer);
             backgroundMusic = Content.Load<Song>("MoreEx");
             MediaPlayer.Play(backgroundMusic);
             MediaPlayer.IsRepeating = true;
             MediaPlayer.Volume = 0.1f;
+
             new SimpleTileLayer(this, backTileNames, tileMap, TileRefs, tileWidth, tileHeight);
 
             // This code is used to find tiles of a specific type
@@ -218,10 +219,8 @@ namespace TileBasedPlayer20172018
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Transparent);
-            spriteBatch.Begin();
-            timer.Draw(spriteBatch);
-            spriteBatch.End();
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            
             base.Draw(gameTime);
         }
     }
