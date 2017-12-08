@@ -87,7 +87,7 @@ namespace TileBasedPlayer20172018
             }, 64, 64, 0f);
 
             // Add Tank Projectile
-            Projectile bullet = new Projectile(this, tankPlayerTurret.CentrePos, new List<TileRef>()
+            Projectile bullet = new Projectile(this, "PLAYER", tankPlayerTurret.CentrePos, new List<TileRef>()
             {
                 new TileRef(10, 2, 0),
             }, 64, 64, 0f, tankPlayerTurret.Direction);
@@ -113,11 +113,18 @@ namespace TileBasedPlayer20172018
             Services.AddService(enemyOne);
 
             #region Create Sentry Tank Turrets
+
             SentryTurret enemyTurretOne = new SentryTurret(this, new Vector2(128, 128), new List<TileRef>()
             {
                 new TileRef(10, 5, 0),
             }, 64, 64, 0f, "Enemy Tank 1");
 
+            Projectile enemyBulletOne = new Projectile(this, "SENTRY", tankPlayerTurret.CentrePos, new List<TileRef>()
+            {
+                new TileRef(10, 2, 0),
+            }, 64, 64, 0f, enemyTurretOne.Direction, 3f);
+
+            enemyTurretOne.AddProjectile(enemyBulletOne);
             Services.AddService(enemyTurretOne);
 
             #endregion

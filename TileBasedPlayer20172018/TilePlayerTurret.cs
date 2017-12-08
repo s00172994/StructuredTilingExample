@@ -44,7 +44,7 @@ namespace Tiler
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
                 : base(game, playerPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
-            DrawOrder = 55;
+            DrawOrder = 70;
             origin = originToRotate;
         }
 
@@ -65,10 +65,8 @@ namespace Tiler
             this.angleOfRotation = TurnToFace(this.CentrePos - new Vector2(WIDTH_IN, 0f), CrosshairPosition, this.angleOfRotation, turnSpeed);
 
             Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
-            // Send this direction to the projectiles for update
-            Bullet.GetDirection(Direction);
 
-            Reload();
+            Fire();
 
             base.Update(gameTime);
         }
@@ -87,7 +85,7 @@ namespace Tiler
             Bullet = loadedBullet;
         }
 
-        public void Reload()
+        public void Fire()
         {
             if (Bullet != null && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle)
             {
@@ -100,6 +98,9 @@ namespace Tiler
                     && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle
                     && this.angleOfRotation != 0 && Math.Round(this.angleOfRotationPrev,2) == Math.Round(this.angleOfRotation,2))
                 {
+                    // Send this direction to the projectile
+                    Bullet.GetDirection(Direction);
+                    // Shoot at the specified position
                     Bullet.Shoot(CrosshairPosition - new Vector2(FrameWidth / 2, FrameHeight / 2));
                 }
             }

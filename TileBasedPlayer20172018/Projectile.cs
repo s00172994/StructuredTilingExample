@@ -30,6 +30,7 @@ namespace Tiler
 
         private Vector2 Target;
         private Vector2 StartPosition;
+        private Vector2 PreviousPosition;
 
         public Vector2 CentrePos
         {
@@ -39,22 +40,44 @@ namespace Tiler
             }
         }
 
-        public int Velocity = 50;
+        public int Velocity = 10;
         public Vector2 Direction;
-        private const float LIFE_SPAN = 2f; // Explosion life in seconds
-        private float timer = 0f;
+        private float lifeSpan = 2f; // Default explosion life in seconds
+        private float timer = 0;
 
-        public Projectile(Game game, Vector2 projectilePosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, Vector2 direction)
+        private string Parent;
+
+        private bool isPastTarget = false;
+        private bool gotDirection = false;
+
+        public Projectile(Game game, string ParentName, Vector2 projectilePosition, List<TileRef> sheetRefs, 
+            int frameWidth, int frameHeight, float layerDepth, Vector2 direction)
             : base(game, projectilePosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
+            Parent = ParentName;
             Target = Vector2.Zero;
             Direction = direction;
             DrawOrder = 50;
             StartPosition = projectilePosition;
         }
 
+        #region LifeSpan Overload Method
+        public Projectile(Game game, string ParentName, Vector2 projectilePosition, List<TileRef> sheetRefs,
+            int frameWidth, int frameHeight, float layerDepth, Vector2 direction, float lifeSpanIn)
+            : base(game, projectilePosition, sheetRefs, frameWidth, frameHeight, layerDepth)
+        {
+            Parent = ParentName;
+            Target = Vector2.Zero;
+            Direction = direction;
+            DrawOrder = 50;
+            lifeSpan = lifeSpanIn;
+        }
+        #endregion
+
         public override void Update(GameTime gameTime)
         {
+            PreviousPosition = PixelPosition;
+
             switch (projectileState)
             {
                 case PROJECTILE_STATUS.Idle:
@@ -63,27 +86,36 @@ namespace Tiler
 
                 case PROJECTILE_STATUS.Firing:
                     this.Visible = true;
-                    this.angleOfRotation = TurnToFace(PixelPosition, Target, angleOfRotation, 10f);
-
+                    this.gotDirection = false;
                     this.PixelPosition += (Direction * Velocity);
+
+                    FaceThis(gameTime);
 
                     #region Collision Checking
 
                     // Projectile is out of tile map bounds
-                    if (this.PixelPosition.X < 0 || this.PixelPosition.Y < 0 
-                        || this.PixelPosition.X > CameraNS.Camera._worldBound.X 
+                    if (this.PixelPosition.X < 0 || this.PixelPosition.Y < 0
+                        || this.PixelPosition.X > CameraNS.Camera._worldBound.X
                         || this.PixelPosition.Y > CameraNS.Camera._worldBound.Y)
                     {
                         projectileState = PROJECTILE_STATUS.Exploding;
                     }
 
-                    // Reference Sentry
-                    SentryTurret otherSentry = (SentryTurret)Game.Services.GetService(typeof(SentryTurret));
-
-                    // Check collision with Sentry
-                    if (collisionDetect(otherSentry))
+                    // Ensure the sentry doesn't shoot itself !
+                    if (Parent != "PLAYER")
                     {
-                        projectileState = PROJECTILE_STATUS.Exploding;
+
+                    }
+                    else
+                    {
+                        // Reference Collision Objects
+                        SentryTurret otherSentry = (SentryTurret)Game.Services.GetService(typeof(SentryTurret));
+
+                        // Check collision with Sentry
+                        if (collisionDetect(otherSentry))
+                        {
+                            projectileState = PROJECTILE_STATUS.Exploding;
+                        }
                     }
                     #endregion
 
@@ -98,9 +130,10 @@ namespace Tiler
 
                 case PROJECTILE_STATUS.Exploding:
                     this.Visible = false;
+
                     timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                    if (timer > LIFE_SPAN)
+                    if (timer > lifeSpan)
                     {
                         timer = 0f;
                         // Reload Projectile
@@ -111,15 +144,36 @@ namespace Tiler
             base.Update(gameTime);
         }
 
-        public void GetDirection(Vector2 TilePlayerTurretDirection)
+        public void GetDirection(Vector2 TurretDirection)
         {
-            Direction = TilePlayerTurretDirection;
+            if (!gotDirection)
+            {
+                Direction = TurretDirection;
+                gotDirection = true;
+            }
         }
 
         public void Shoot(Vector2 TargetDirection)
         {
             projectileState = PROJECTILE_STATUS.Firing;
             Target = TargetDirection;
+            isPastTarget = false;
+        }
+
+        public void FaceThis(GameTime gameTime)
+        {
+
+            if (Parent.ToUpper() == "PLAYER" && Vector2.Distance(this.PixelPosition, Target) > 2
+                && !isPastTarget)
+            {
+                this.angleOfRotation = TurnToFace(PixelPosition, Target, angleOfRotation, 10f);
+                isPastTarget = true;
+            }
+            else if (!isPastTarget)
+            {
+                this.angleOfRotation = TurnToFace(CentrePos, Target, angleOfRotation, 10f);
+                isPastTarget = true;
+            }
         }
 
         public override void Draw(GameTime gameTime)

@@ -16,7 +16,7 @@ namespace Tiler
     class SentryTurret : RotatingSprite
     {
         float collisionRadius = 300;
-        float turnSpeed = 0.02f;
+        float turnSpeed = 0.015f;
         const float WIDTH_IN = 11f; // Width in from the left for the sprites origin
         float angleOfRotationPrev;
 
@@ -45,7 +45,7 @@ namespace Tiler
                 : base(game, sentryPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Name = nameIn;
-            DrawOrder = 20;
+            DrawOrder = 60;
             origin = trueOrigin;
         }
 
@@ -62,14 +62,19 @@ namespace Tiler
 
             angleOfRotationPrev = this.angleOfRotation;
 
-            // Face the player when player is within radius
-            Face(player);
-            // Shoot at the player
-            Detect(player, gameTime);
+            this.Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
 
-            Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
+            Bullet.GetDirection(this.Direction);
+
+            // Face and shoot at the player when player is within radius
+            Detect(player);
 
             base.Update(gameTime);
+        }
+
+        public void AddProjectile(Projectile projectileIn)
+        {
+            Bullet = projectileIn;
         }
 
         public bool IsInRadius(TilePlayer player)
@@ -82,35 +87,36 @@ namespace Tiler
                 return false;
         }
 
-        private void Face(TilePlayer player)
+        private void Detect(TilePlayer player)
         {
             if (IsInRadius(player))
             {
                 this.angleOfRotation = TurnToFace(this.CentrePos, player.CentrePos, this.angleOfRotation, turnSpeed);
+
+                // Shoot at the player
+                FireAt(player);
             }
         }
 
-        public void Detect(TilePlayer player, GameTime gameTime)
+        public void FireAt(TilePlayer player)
         {
-           
-        }
+            if (Bullet != null && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle)
+            {
+                Bullet.PixelPosition = (this.PixelPosition - new Vector2(WIDTH_IN, 0));
+            }
 
-        //public void Reload()
-        //{
-        //    if (Bullet != null && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle)
-        //    {
-        //        Bullet.PixelPosition = (this.PixelPosition - new Vector2(WIDTH_IN, 0));
-        //    }
-        //    if (Bullet != null)
-        //    {
-        //        if (Mouse.GetState().LeftButton == ButtonState.Pressed
-        //            && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle
-        //            && this.angleOfRotation != 0 && Math.Round(this.angleOfRotationPrev, 2) == Math.Round(this.angleOfRotation, 2))
-        //        {
-        //            Bullet.Shoot(CrosshairPosition - new Vector2(FrameWidth / 2, FrameHeight / 2));
-        //        }
-        //    }
-        //}
+            if (Bullet != null)
+            {
+                if (Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle
+                    && this.angleOfRotation != 0 && Math.Round(this.angleOfRotationPrev, 2) == Math.Round(this.angleOfRotation, 2))
+                {
+                    // Send this direction to the projectile
+                    Bullet.GetDirection(Direction);
+                    // Shoot at the specified position
+                    Bullet.Shoot(player.CentrePos);
+                }
+            }
+        }
 
         public void AddSelfToBody(Vector2 followPos)
         {

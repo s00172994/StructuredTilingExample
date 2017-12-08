@@ -31,7 +31,7 @@ namespace Tiler
                 : base(game, startPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Name = nameIn;
-            DrawOrder = 3;
+            DrawOrder = 30;
         }
 
         public override void Update(GameTime gameTime)
