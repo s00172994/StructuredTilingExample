@@ -52,8 +52,8 @@ namespace TileBasedPlayer20172018
         {
             graphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            //graphics.PreferredBackBufferWidth = 1280;
+            //graphics.PreferredBackBufferHeight = 720;
             graphics.PreferMultiSampling = false;
             graphics.SynchronizeWithVerticalRetrace = true;
             graphics.ApplyChanges();
@@ -70,7 +70,8 @@ namespace TileBasedPlayer20172018
         protected override void Initialize()
         {
             new Camera(this, Vector2.Zero,
-                new Vector2(tileMap.GetLength(1) * tileWidth, tileMap.GetLength(0) * tileHeight));
+                new Vector2((tileMap.GetLength(1) * tileWidth), 
+                            (tileMap.GetLength(0) * tileHeight)));
 
             new InputEngine(this);
 

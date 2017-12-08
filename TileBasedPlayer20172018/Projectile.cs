@@ -68,13 +68,18 @@ namespace Tiler
                     this.PixelPosition += (Direction * Velocity);
 
                     #region Collision Checking
-                    //if (this.PixelPosition == )
-                    // Check to see if it's in the wrong place or (SIMPLY) out of map bounds
-                    // THEN explode
-                    // So that our bullet returns! =)
+
+                    // Projectile is out of tile map bounds
+                    if (this.PixelPosition.X < 0 || this.PixelPosition.Y < 0 
+                        || this.PixelPosition.X > CameraNS.Camera._worldBound.X 
+                        || this.PixelPosition.Y > CameraNS.Camera._worldBound.Y)
+                    {
+                        projectileState = PROJECTILE_STATUS.Exploding;
+                    }
 
                     // Reference Sentry
                     SentryTurret otherSentry = (SentryTurret)Game.Services.GetService(typeof(SentryTurret));
+
                     // Check collision with Sentry
                     if (collisionDetect(otherSentry))
                     {
@@ -97,6 +102,7 @@ namespace Tiler
 
                     if (timer > LIFE_SPAN)
                     {
+                        timer = 0f;
                         // Reload Projectile
                         projectileState = PROJECTILE_STATUS.Idle;
                     }

@@ -15,7 +15,7 @@ namespace CameraNS
     class Camera : GameComponent
     {
         static Vector2 _camPos = Vector2.Zero;
-        static Vector2 _worldBound;
+        public static Vector2 _worldBound;
         public float CameraSpeed = 0.03f;
         public float CameraSpread = 120f;
 
