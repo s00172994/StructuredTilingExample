@@ -1,11 +1,17 @@
-﻿using CameraNS;
-using Engine.Engines;
+﻿using System;
+using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
+
 using Tiler;
 using Tiling;
+using CameraNS;
+using Engine.Engines;
+using Screens;
+using Helpers;
+using Microsoft.Xna.Framework.Media;
 
 namespace TileBasedPlayer20172018
 {
@@ -13,6 +19,8 @@ namespace TileBasedPlayer20172018
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        SplashScreen MainScreen;
 
         List<TileRef> TileRefs = new List<TileRef>();
         List<Collider> Colliders = new List<Collider>();
@@ -145,6 +153,7 @@ namespace TileBasedPlayer20172018
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            Helper.graphicsDevice = GraphicsDevice;
 
             // Add SpriteBatch to services, it can be called anywhere.
             Services.AddService(spriteBatch);
@@ -162,6 +171,22 @@ namespace TileBasedPlayer20172018
 
             // This code is used to find tiles of a specific type
             //List<Tile> tileFound = SimpleTileLayer.GetNamedTiles(backTileNames[(int)TileType.GREENBOX]);
+
+            #region Splash Screen
+            MainScreen = new SplashScreen(this, Vector2.Zero, 8000.00f,
+                            Content.Load<Texture2D>("background/MainMenu"),
+                            Content.Load<Texture2D>("background/Pause"),
+                            Content.Load<Texture2D>("background/Lose"),
+                            Content.Load<Texture2D>("background/Win"),
+                            Content.Load<Song>("audio/MainMenu"),
+                            Content.Load<Song>("audio/Play"),
+                            Content.Load<Song>("audio/Pause"),
+                            Content.Load<Song>("audio/GameOver"),
+                            Content.Load<Song>("audio/Win"),
+                            Keys.P, 
+                            Keys.Enter,
+                            Content.Load<SpriteFont>("fonts/font"));
+            #endregion
         }
 
         public void SetColliders(TileType t)

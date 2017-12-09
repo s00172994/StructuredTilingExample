@@ -42,24 +42,26 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Camera.cs" />
-    <Compile Include="Collider.cs" />
-    <Compile Include="Crosshair.cs" />
+    <Compile Include="Engines\Camera.cs" />
+    <Compile Include="Engines\Collider.cs" />
+    <Compile Include="GUI\Crosshair.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="HealthBar.cs" />
-    <Compile Include="InputEngine.cs" />
+    <Compile Include="GUI\HealthBar.cs" />
+    <Compile Include="Engines\Helpers.cs" />
+    <Compile Include="Engines\InputEngine.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Projectile.cs" />
+    <Compile Include="Entities\Particles\Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RotatingSprite.cs" />
-    <Compile Include="Sentry.cs" />
-    <Compile Include="SentryTurret.cs" />
-    <Compile Include="SimpleTileLayer.cs" />
-    <Compile Include="AnimatedSprite.cs" />
-    <Compile Include="TilePlayerTurret.cs" />
-    <Compile Include="Tile.cs" />
-    <Compile Include="TilePlayer.cs" />
-    <Compile Include="TileRef.cs" />
+    <Compile Include="Sprites\RotatingSprite.cs" />
+    <Compile Include="Entities\Sentry.cs" />
+    <Compile Include="Entities\SentryTurret.cs" />
+    <Compile Include="Sprites\SimpleTileLayer.cs" />
+    <Compile Include="Sprites\AnimatedSprite.cs" />
+    <Compile Include="GUI\SplashScreen.cs" />
+    <Compile Include="Entities\TilePlayerTurret.cs" />
+    <Compile Include="Sprites\Tile.cs" />
+    <Compile Include="Entities\TilePlayer.cs" />
+    <Compile Include="Sprites\TileRef.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
