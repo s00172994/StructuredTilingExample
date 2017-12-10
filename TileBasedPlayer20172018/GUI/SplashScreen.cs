@@ -239,6 +239,5 @@ namespace Screens
             }
             spriteBatch.End();
         }
-
     }
 }

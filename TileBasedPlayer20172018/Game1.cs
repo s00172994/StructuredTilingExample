@@ -123,7 +123,6 @@ namespace TileBasedPlayer20172018
                 new TileRef(10, 2, 0),
             }, 64, 64, 0f, tankPlayerTurret.Direction,
             Content.Load<SoundEffect>("audio/TankShoot"));
-
             tankPlayerTurret.AddProjectile(bullet);
 
             Services.AddService(tankPlayer);
@@ -158,7 +157,6 @@ namespace TileBasedPlayer20172018
 
             enemyTurretOne.AddProjectile(enemyBulletOne);
             Services.AddService(enemyTurretOne);
-
             #endregion
 
             #endregion

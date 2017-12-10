@@ -19,7 +19,6 @@ namespace AnimatedSprite
         private Rectangle range;
         protected int tileRangeDistance = 4;
         protected float rotationSpeed = .5f;
-
         public Rectangle Range
         {
             get
@@ -33,7 +32,6 @@ namespace AnimatedSprite
                 range = value;
             }
         }
-
         public HealthBar Hbar
         {
             get
@@ -46,7 +44,6 @@ namespace AnimatedSprite
                 hbar = value;
             }
         }
-
         public int Health
         {
             get
@@ -59,7 +56,6 @@ namespace AnimatedSprite
                 health = value;
             }
         }
-
         HealthBar hbar;
 
         public RotatingSprite(Game game, Vector2 userPosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
@@ -111,7 +107,7 @@ namespace AnimatedSprite
             if (Hbar != null)
             {
                 Hbar.health = Health;
-                Hbar.position = PixelPosition - new Vector2(10, 20);
+                Hbar.position = PixelPosition - new Vector2((FrameWidth / 2 - 10), (-FrameHeight - 20));
             }
 
             base.Update(gametime);
@@ -120,7 +116,7 @@ namespace AnimatedSprite
         public override void Draw(GameTime gameTime)
         {
             if (Hbar != null)
-                Hbar.draw(Game.Services.GetService<SpriteBatch>());
+                Hbar.Draw(gameTime);
             base.Draw(gameTime);
         }
 

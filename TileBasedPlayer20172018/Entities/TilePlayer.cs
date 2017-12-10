@@ -38,6 +38,7 @@ namespace Tiler
         SoundEffect TankTrackSound;
         SoundEffectInstance HumSoundInstance;
         SoundEffectInstance TrackSoundInstance;
+        HealthBar healthBar;
 
         public TilePlayer(Game game, Vector2 startPosition,
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth,
@@ -45,6 +46,9 @@ namespace Tiler
                 : base(game, startPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             DrawOrder = 45;
+            healthBar = new HealthBar(game, PixelPosition);
+            Health = 100;
+            AddHealthBar(healthBar);
 
             #region Tank Audio
             TankHumSound = tankHumSound;

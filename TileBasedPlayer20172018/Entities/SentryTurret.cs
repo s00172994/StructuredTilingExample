@@ -27,6 +27,7 @@ namespace Tiler
         public Vector2 Direction;
         private SoundEffect TankTurnSound;
         private SoundEffectInstance TurnSoundInstance;
+        HealthBar healthBar;
 
         public Vector2 CentrePos
         {
@@ -51,6 +52,9 @@ namespace Tiler
             Name = nameIn;
             DrawOrder = 60;
             origin = trueOrigin;
+            healthBar = new HealthBar(game, PixelPosition);
+            Health = 100;
+            AddHealthBar(healthBar);
 
             #region Turret Audio
             TankTurnSound = turnSound;

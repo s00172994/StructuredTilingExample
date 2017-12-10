@@ -41,8 +41,10 @@ namespace Tiler
         }
         public int Velocity = 15;
         public Vector2 Direction;
-        private float lifeSpan = 2f; // Default explosion life in seconds
+        private float explosionLifeSpan = 2f; // Default explosion life in seconds
+        private const float FLYING_LIFE_SPAN = 1f; // Default flight life in seconds
         private float timer = 0;
+        private float flyTimer = 0;
         private string Parent;
         private bool isPastTarget = false;
         private bool gotDirection = false;
@@ -77,7 +79,7 @@ namespace Tiler
             Target = Vector2.Zero;
             Direction = direction;
             DrawOrder = 50;
-            lifeSpan = lifeSpanIn;
+            explosionLifeSpan = lifeSpanIn;
             _sndShoot = sndShoot;
         }
         #endregion
@@ -91,10 +93,12 @@ namespace Tiler
                 switch (projectileState)
                 {
                     case PROJECTILE_STATUS.Idle:
-                        this.Visible = true;
+                        this.Visible = false;
                         break;
 
                     case PROJECTILE_STATUS.Firing:
+                        flyTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
                         this.Visible = true;
                         this.gotDirection = false;
                         this.PixelPosition += (Direction * Velocity);
@@ -106,8 +110,10 @@ namespace Tiler
                         // Projectile is out of tile map bounds
                         if (this.PixelPosition.X < 0 || this.PixelPosition.Y < 0
                             || this.PixelPosition.X > CameraNS.Camera._worldBound.X
-                            || this.PixelPosition.Y > CameraNS.Camera._worldBound.Y)
+                            || this.PixelPosition.Y > CameraNS.Camera._worldBound.Y
+                            || flyTimer > FLYING_LIFE_SPAN)
                         {
+                            flyTimer = 0f;
                             projectileState = PROJECTILE_STATUS.Exploding;
                         }
 
@@ -125,6 +131,7 @@ namespace Tiler
                             if (collisionDetect(otherSentry))
                             {
                                 projectileState = PROJECTILE_STATUS.Exploding;
+
                             }
                         }
                         #endregion
@@ -150,7 +157,7 @@ namespace Tiler
 
                         timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                        if (timer > lifeSpan)
+                        if (timer > explosionLifeSpan)
                         {
                             timer = 0f;
                             // Reload Projectile

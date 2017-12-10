@@ -47,6 +47,8 @@ namespace Tiler
         public override void Update(GameTime gameTime)
         {
             TilePlayer p = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
+            Projectile projectile = (Projectile)Game.Services.GetService(typeof(Projectile));
+
             if (p == null) return;
             else
             {
@@ -55,6 +57,7 @@ namespace Tiler
                     p.PixelPosition = p.PreviousPosition;
                 }
             }
+
             base.Update(gameTime);
         }
 
