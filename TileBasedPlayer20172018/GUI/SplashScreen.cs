@@ -18,7 +18,7 @@ namespace Screens
         Texture2D _txPause;
         Texture2D _txGameOver;
         Texture2D _txWin;
-        public const float VOLUME = 0.4f;
+        public const float VOLUME = 0.5f;
         public bool Active { get; set; }
         public Texture2D txMain
         {
@@ -59,7 +59,8 @@ namespace Screens
         public Song PauseTrack { get; set; }
         public Song GameOverTrack { get; set; }
         public Song WinTrack { get; set; }
-        public SoundEffectInstance SoundPlayer { get; set; }
+        public SoundEffect BlinkPlay { get; set; }
+        public SoundEffect BlinkPause { get; set; }
         public Vector2 Position { get; set; }
         public Keys PauseKey;
         public Keys ActivationKey;
@@ -67,16 +68,18 @@ namespace Screens
         public GameCondition CurrentGameCondition;
         public SpriteFont Font;
         public float TimeRemaining;
+        private float TrackPlayCount = 0; // To stop Game Over track loop
         public Color FontColor = new Color(243, 208, 168);
         TimeSpan PauseTime;
 
         public SplashScreen(Game game, Vector2 pos, float timeLeft,
             Texture2D txMain, Texture2D txPause, Texture2D txGameOver, Texture2D txWin,
             Song menuMusic, Song playMusic, Song pauseMusic, Song gameOverMusic, Song winMusic,
-            Keys pauseKey, Keys activateKey, SpriteFont fontIn) : base(game)
+            Keys pauseKey, Keys activateKey, SpriteFont fontIn, SoundEffect blinkPlay, SoundEffect blinkPause) : base(game)
         {
             game.Components.Add(this);
             DrawOrder = 1000;
+            #region Load Audio
             _txMain = txMain;
             _txPause = txPause;
             _txGameOver = txGameOver;
@@ -86,6 +89,9 @@ namespace Screens
             PauseTrack = pauseMusic;
             GameOverTrack = gameOverMusic;
             WinTrack = winMusic;
+            BlinkPlay = blinkPlay;
+            BlinkPause = blinkPause;
+            #endregion
             Position = pos;
             ActivationKey = activateKey;
             PauseKey = pauseKey;
@@ -117,7 +123,11 @@ namespace Screens
 
                     // Check Input
                     if (InputEngine.IsKeyPressed(ActivationKey))
+                    {
                         Active = !Active;
+                        BlinkPlay.Play();
+                        Helper.CurrentGameStatus = GameStatus.PLAYING;
+                    }
                     break;
                 case ActiveScreen.PLAY:
                     if (Active)
@@ -129,8 +139,12 @@ namespace Screens
 
                     // Check Input
                     if (InputEngine.IsKeyPressed(PauseKey))
+                    {
                         Active = !Active;
-
+                        BlinkPause.Play();
+                        Helper.CurrentGameStatus = GameStatus.PAUSED;
+                    }
+                    
                     if (TimeRemaining > 0)
                     {
                         TimeRemaining -= deltaTime;
@@ -159,20 +173,22 @@ namespace Screens
 
                     // Check Input
                     if (InputEngine.IsKeyPressed(PauseKey))
+                    {
                         Active = !Active;
+                        BlinkPause.Play();
+                        Helper.CurrentGameStatus = GameStatus.PLAYING;
+                    }
                     break;
                 case ActiveScreen.LOSE:
-                    float trackTime = 0;
-                    trackTime += (float)gameTime.ElapsedGameTime.Seconds;
-
-                    if (MediaPlayer.State == MediaState.Stopped)
+                    if (MediaPlayer.State == MediaState.Stopped && TrackPlayCount < 1)
                     {
                         MediaPlayer.Play(GameOverTrack);
+                        TrackPlayCount++;
                     }
-
-
+                    Helper.CurrentGameStatus = GameStatus.PAUSED;
                     break;
                 case ActiveScreen.WIN:
+                    Helper.CurrentGameStatus = GameStatus.PAUSED;
                     break;
                 default:
                     break;

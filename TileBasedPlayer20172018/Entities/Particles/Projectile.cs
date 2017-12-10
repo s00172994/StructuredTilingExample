@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 
 using Engine.Engines;
 using AnimatedSprite;
 using Tiling;
+using Helpers;
 
 namespace Tiler
 {
@@ -27,11 +29,9 @@ namespace Tiler
             get { return projectileState; }
             set { projectileState = value; }
         }
-
         private Vector2 Target;
         private Vector2 StartPosition;
         private Vector2 PreviousPosition;
-
         public Vector2 CentrePos
         {
             get
@@ -39,19 +39,25 @@ namespace Tiler
                 return PixelPosition + new Vector2(FrameWidth / 2, FrameHeight / 2);
             }
         }
-
-        public int Velocity = 10;
+        public int Velocity = 15;
         public Vector2 Direction;
         private float lifeSpan = 2f; // Default explosion life in seconds
         private float timer = 0;
-
         private string Parent;
-
         private bool isPastTarget = false;
         private bool gotDirection = false;
+        private SoundEffect _sndShoot;
+        public SoundEffect ShootSound
+        {
+            get
+            { return _sndShoot; }
+            set
+            { _sndShoot = value; }
+        }
+        public bool ShootSoundPlayed = false;
 
         public Projectile(Game game, string ParentName, Vector2 projectilePosition, List<TileRef> sheetRefs, 
-            int frameWidth, int frameHeight, float layerDepth, Vector2 direction)
+            int frameWidth, int frameHeight, float layerDepth, Vector2 direction, SoundEffect sndShoot)
             : base(game, projectilePosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Parent = ParentName;
@@ -59,11 +65,12 @@ namespace Tiler
             Direction = direction;
             DrawOrder = 50;
             StartPosition = projectilePosition;
+            _sndShoot = sndShoot;
         }
 
         #region LifeSpan Overload Method
         public Projectile(Game game, string ParentName, Vector2 projectilePosition, List<TileRef> sheetRefs,
-            int frameWidth, int frameHeight, float layerDepth, Vector2 direction, float lifeSpanIn)
+            int frameWidth, int frameHeight, float layerDepth, Vector2 direction, SoundEffect sndShoot, float lifeSpanIn)
             : base(game, projectilePosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Parent = ParentName;
@@ -71,77 +78,88 @@ namespace Tiler
             Direction = direction;
             DrawOrder = 50;
             lifeSpan = lifeSpanIn;
+            _sndShoot = sndShoot;
         }
         #endregion
 
         public override void Update(GameTime gameTime)
         {
-            PreviousPosition = PixelPosition;
-
-            switch (projectileState)
+            if (Helper.CurrentGameStatus == GameStatus.PLAYING)
             {
-                case PROJECTILE_STATUS.Idle:
-                    this.Visible = true;
-                    break;
+                PreviousPosition = PixelPosition;
 
-                case PROJECTILE_STATUS.Firing:
-                    this.Visible = true;
-                    this.gotDirection = false;
-                    this.PixelPosition += (Direction * Velocity);
+                switch (projectileState)
+                {
+                    case PROJECTILE_STATUS.Idle:
+                        this.Visible = true;
+                        break;
 
-                    FaceThis(gameTime);
+                    case PROJECTILE_STATUS.Firing:
+                        this.Visible = true;
+                        this.gotDirection = false;
+                        this.PixelPosition += (Direction * Velocity);
 
-                    #region Collision Checking
+                        FaceThis(gameTime);
 
-                    // Projectile is out of tile map bounds
-                    if (this.PixelPosition.X < 0 || this.PixelPosition.Y < 0
-                        || this.PixelPosition.X > CameraNS.Camera._worldBound.X
-                        || this.PixelPosition.Y > CameraNS.Camera._worldBound.Y)
-                    {
-                        projectileState = PROJECTILE_STATUS.Exploding;
-                    }
+                        #region Collision Checking
 
-                    // Ensure the sentry doesn't shoot itself !
-                    if (Parent != "PLAYER")
-                    {
-
-                    }
-                    else
-                    {
-                        // Reference Collision Objects
-                        SentryTurret otherSentry = (SentryTurret)Game.Services.GetService(typeof(SentryTurret));
-
-                        // Check collision with Sentry
-                        if (collisionDetect(otherSentry))
+                        // Projectile is out of tile map bounds
+                        if (this.PixelPosition.X < 0 || this.PixelPosition.Y < 0
+                            || this.PixelPosition.X > CameraNS.Camera._worldBound.X
+                            || this.PixelPosition.Y > CameraNS.Camera._worldBound.Y)
                         {
                             projectileState = PROJECTILE_STATUS.Exploding;
                         }
-                    }
-                    #endregion
 
-                    //// Old smooth point to point projectile movement, doesn't move beyond target
-                    //PixelPosition = Vector2.Lerp(PixelPosition, Target, Velocity);
+                        // Ensure the sentry doesn't shoot itself !
+                        if (Parent != "PLAYER")
+                        {
 
-                    //if (Vector2.Distance(PixelPosition, Target) < Velocity * 2)
-                    //{
-                    //    projectileState = PROJECTILE_STATUS.Exploding;
-                    //}
-                    break;
+                        }
+                        else
+                        {
+                            // Reference Collision Objects
+                            SentryTurret otherSentry = (SentryTurret)Game.Services.GetService(typeof(SentryTurret));
 
-                case PROJECTILE_STATUS.Exploding:
-                    this.Visible = false;
+                            // Check collision with Sentry
+                            if (collisionDetect(otherSentry))
+                            {
+                                projectileState = PROJECTILE_STATUS.Exploding;
+                            }
+                        }
+                        #endregion
 
-                    timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        if (!ShootSoundPlayed)
+                        {
+                            ShootSound.Play();
+                            ShootSoundPlayed = true;
+                        }
 
-                    if (timer > lifeSpan)
-                    {
-                        timer = 0f;
-                        // Reload Projectile
-                        projectileState = PROJECTILE_STATUS.Idle;
-                    }
-                    break;
+                        //// Old smooth point to point projectile movement, doesn't move beyond target
+                        //PixelPosition = Vector2.Lerp(PixelPosition, Target, Velocity);
+
+                        //if (Vector2.Distance(PixelPosition, Target) < Velocity * 2)
+                        //{
+                        //    projectileState = PROJECTILE_STATUS.Exploding;
+                        //}
+                        break;
+
+                    case PROJECTILE_STATUS.Exploding:
+                        this.Visible = false;
+                        ShootSoundPlayed = false;
+
+                        timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                        if (timer > lifeSpan)
+                        {
+                            timer = 0f;
+                            // Reload Projectile
+                            projectileState = PROJECTILE_STATUS.Idle;
+                        }
+                        break;
+                }
+                base.Update(gameTime);
             }
-            base.Update(gameTime);
         }
 
         public void GetDirection(Vector2 TurretDirection)

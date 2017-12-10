@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 
 using Tiling;
+using Helpers;
 
 namespace Tiler
 {
@@ -47,15 +48,18 @@ namespace Tiler
 
         public override void Update(GameTime gameTime)
         {
-            PreviousPosition = PixelPosition;
+            if (Helper.CurrentGameStatus == GameStatus.PLAYING)
+            {
+                PreviousPosition = PixelPosition;
 
-            Movement();
+                Movement();
 
-            Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
-            Velocity = Vector2.Clamp(Velocity, -MaxVelocity, MaxVelocity);
-            this.PixelPosition += (Direction * Velocity);
+                Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
+                Velocity = Vector2.Clamp(Velocity, -MaxVelocity, MaxVelocity);
+                this.PixelPosition += (Direction * Velocity);
 
-            base.Update(gameTime);
+                base.Update(gameTime);
+            }
         }
 
         public void Movement()

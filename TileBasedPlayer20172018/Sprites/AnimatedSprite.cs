@@ -131,10 +131,9 @@ namespace AnimatedSprite
             g.Components.Add(this);
         }
 
-
-        public override void Update(GameTime gametime)
+        public override void Update(GameTime gameTime)
         {
-            timer += (float)gametime.ElapsedGameTime.Milliseconds;
+            timer += (float)gameTime.ElapsedGameTime.Milliseconds;
 
             //if the timer is greater then the time between frames, then animate
             if (timer > mililsecondsBetweenFrames)
@@ -152,8 +151,8 @@ namespace AnimatedSprite
             sourceRectangle = new Rectangle(Frames[CurrentFrame]._sheetPosX * FrameWidth,
                     Frames[CurrentFrame]._sheetPosY * FrameHeight,
                     FrameWidth, FrameHeight);
-
         }
+
         public bool collisionDetect(AnimateSheetSprite other)
         {
             Rectangle myBound = new Rectangle((int)this.PixelPosition.X, (int)this.PixelPosition.Y, this.FrameWidth, this.FrameHeight);

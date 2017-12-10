@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 
 using Tiler;
@@ -20,39 +21,53 @@ namespace TileBasedPlayer20172018
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        Camera CurrentCamera;
         SplashScreen MainScreen;
 
         List<TileRef> TileRefs = new List<TileRef>();
         List<Collider> Colliders = new List<Collider>();
 
-        string[] backTileNames = { "blueBox", "pavement", "blueSteel", "greenBox", "home" };
-        public enum TileType { BLUEBOX, PAVEMENT, BLUESTEEL, GREENBOX, HOME };
-
+        string[] backTileNames = { "dirt", "ground", "metal", "ground2", "ground3", "ground4", "ground5", "ground7", "metal2", "metal3", "metal4" };
+        public enum TileType { DIRT, GROUND, METAL, GROUND2, GROUND3, GROUND4,
+                               GROUND5 };
         int tileWidth = 64;
         int tileHeight = 64;
 
         #region Tile Map
         int[,] tileMap = new int[,]
         {
-        {1,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {1,2,3,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {1,1,1,1,1,1,1,1,1,1,1,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2},
-        {2,1,1,2,2,2,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,2,0,0,0,2,0,0,0,2,2,2,2,3,2,2,2,2},
-        {2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,3,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-        {2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,2,1,1,2,2,2,1,1,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,1,1,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,2,1,1,2,2,2,4,1,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {2,2,3,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0},
+        {0,1,1,1,1,1,5,1,1,1,1,5,5,1,1,1,5,1,0,0,1,1,5,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0},
+        {0,1,1,5,1,1,6,1,1,1,6,6,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0},
+        {0,7,6,6,1,1,0,0,0,0,0,7,1,1,1,5,1,1,1,1,1,1,5,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,7,1,1,1,1,1,5,1,1,1,1,1,5,1,1,1,1,1,1,1,5,1,1,1,1,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,7,1,1,1,1,1,2,2,2,2,2,1,1,1,1,1,5,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,7,1,1,1,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,8,9,9,9,9,9,9,9,9,2,2,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
+        {0,0,1,1,1,1,1,1,1,5,1,1,1,1,1,1,2,8,9,9,9,9,9,9,9,9,2,2,1,1,1,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,4,4,4,4,4,1,1,1,1,1,1,1,0,0},
+        {0,0,1,1,5,1,1,1,1,1,1,1,5,1,1,1,2,8,9,9,9,9,9,9,9,9,2,2,1,1,1,2,8,9,9,10,2,1,1,1,1,5,1,1,1,1,4,4,4,4,4,1,1,5,1,1,1,1,0,0},
+        {0,0,1,1,1,1,1,1,5,1,1,1,1,1,1,1,2,8,9,9,9,9,9,9,9,9,2,1,1,1,1,2,8,9,9,10,2,1,1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0},
+        {0,0,1,1,5,1,1,1,1,5,1,1,1,1,1,1,2,8,9,9,9,9,9,9,9,9,2,1,1,1,1,2,8,9,9,10,2,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,2,2,2,1,1,1,0,0},
+        {0,0,7,6,6,1,1,6,1,6,1,1,1,1,1,5,2,8,9,9,9,9,9,9,9,9,2,1,1,5,1,2,8,9,9,10,2,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,2,2,2,1,1,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,5,2,8,9,9,9,9,9,9,9,10,2,1,1,1,1,2,8,9,9,10,2,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,8,9,9,9,9,9,9,9,10,2,1,1,1,1,2,8,9,9,10,2,1,1,5,1,1,2,2,2,2,1,1,5,1,1,1,1,1,1,1,1,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,8,9,9,9,9,9,9,9,10,2,1,1,1,1,2,2,2,2,1,1,1,1,1,2,2,2,2,2,2,1,1,1,1,6,6,1,1,6,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,8,9,9,9,9,9,9,9,10,2,5,1,1,5,1,1,1,1,1,1,1,2,2,2,2,2,2,2,1,1,1,1,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0},
+        {0,0,1,1,1,1,1,5,1,1,1,0,0,1,1,5,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,2,2,2,2,2,2,2,2,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0},
+        {0,0,1,1,1,1,1,1,1,1,1,1,1,5,1,5,1,5,1,1,1,1,1,1,5,1,1,5,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0},
+        {0,0,5,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,0,0,0,0,0,0,0,0,0,0},
+        {0,0,1,1,0,0,0,0,1,6,1,6,1,1,5,1,1,1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,5,1,1,1,2,2,2,2,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,0},
+        {0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,1,1,0,0},
+        {0,0,1,1,0,0,0,0,0,0,0,0,0,0,5,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,5,1,1,5,1,1,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,1,1,0,0},
+        {0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,1,1,1,1,5,1,1,1,1,1,1,0,0},
+        {0,0,1,1,1,1,1,1,0,0,0,0,0,1,1,1,5,2,2,2,1,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,1,1,1,1,1,1,1,1,1,1,1,0,0},
+        {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,1,1,1,1,2,2,2,1,1,1,1,1,1,1,5,1,1,1,0,0},
+        {0,0,1,6,1,1,1,1,1,6,1,1,1,1,6,1,1,6,1,1,6,1,1,1,1,1,6,1,1,6,1,1,1,1,1,1,1,1,0,0,0,0,0,2,2,2,2,1,1,1,1,1,1,6,6,1,1,1,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         };
         #endregion
 
@@ -64,6 +79,7 @@ namespace TileBasedPlayer20172018
             //graphics.PreferredBackBufferHeight = 720;
             graphics.PreferMultiSampling = false;
             graphics.SynchronizeWithVerticalRetrace = true;
+            //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
             IsMouseVisible = false;
@@ -77,9 +93,10 @@ namespace TileBasedPlayer20172018
 
         protected override void Initialize()
         {
-            new Camera(this, Vector2.Zero,
+            CurrentCamera = new Camera(this, Vector2.Zero,
                 new Vector2((tileMap.GetLength(1) * tileWidth), 
                             (tileMap.GetLength(0) * tileHeight)));
+            Services.AddService(CurrentCamera);
 
             new InputEngine(this);
 
@@ -92,13 +109,16 @@ namespace TileBasedPlayer20172018
             TilePlayerTurret tankPlayerTurret = new TilePlayerTurret(this, new Vector2(64, 128), new List<TileRef>()
             {
                 new TileRef(10, 1, 0),
-            }, 64, 64, 0f);
+            }, 64, 64, 0f,
+            Content.Load<SoundEffect>("audio/PlayerTankShoot"),
+            Content.Load<SoundEffect>("audio/PlayerTankReload"));
 
             // Add Tank Projectile
             Projectile bullet = new Projectile(this, "PLAYER", tankPlayerTurret.CentrePos, new List<TileRef>()
             {
                 new TileRef(10, 2, 0),
-            }, 64, 64, 0f, tankPlayerTurret.Direction);
+            }, 64, 64, 0f, tankPlayerTurret.Direction,
+            Content.Load<SoundEffect>("audio/TankShoot"));
 
             tankPlayerTurret.AddProjectile(bullet);
 
@@ -130,7 +150,7 @@ namespace TileBasedPlayer20172018
             Projectile enemyBulletOne = new Projectile(this, "SENTRY", tankPlayerTurret.CentrePos, new List<TileRef>()
             {
                 new TileRef(10, 2, 0),
-            }, 64, 64, 0f, enemyTurretOne.Direction, 3f);
+            }, 64, 64, 0f, enemyTurretOne.Direction, Content.Load<SoundEffect>("audio/SentryTankShootAlt"), 3f);
 
             enemyTurretOne.AddProjectile(enemyBulletOne);
             Services.AddService(enemyTurretOne);
@@ -144,8 +164,8 @@ namespace TileBasedPlayer20172018
                 new TileRef(10, 3, 0),
             }, 64, 64, 0f);
 
-            //SetColliders(TileType.BLUESTEEL);
-            //SetColliders(TileType.BLUEBOX);
+            SetColliders(TileType.DIRT);
+            SetColliders(TileType.METAL);
 
             base.Initialize();
         }
@@ -161,11 +181,17 @@ namespace TileBasedPlayer20172018
 
             // Tile References to be drawn on the Map corresponding to the entries in the defined 
             // Tile Map
-            TileRefs.Add(new TileRef(3, 2, 0)); // Metal Box
+            TileRefs.Add(new TileRef(7, 0, 0)); // Dirt
             TileRefs.Add(new TileRef(4, 1, 1)); // Ground
-            TileRefs.Add(new TileRef(1, 2, 2)); // Metal Box 2
-            TileRefs.Add(new TileRef(6, 1, 3)); // 
-            TileRefs.Add(new TileRef(0, 2, 4));
+            TileRefs.Add(new TileRef(3, 2, 2)); // Metal Box
+            TileRefs.Add(new TileRef(5, 0, 3)); // Ground 2
+            TileRefs.Add(new TileRef(5, 1, 4)); // groud 3
+            TileRefs.Add(new TileRef(7, 2, 5)); // ground 4
+            TileRefs.Add(new TileRef(7, 3, 6)); // ground 5
+            TileRefs.Add(new TileRef(6, 2, 7)); // ground 4
+            TileRefs.Add(new TileRef(1, 1, 8)); // metal 2
+            TileRefs.Add(new TileRef(2, 1, 9)); // metal 3
+            TileRefs.Add(new TileRef(3, 1, 10)); // metal 4
 
             new SimpleTileLayer(this, backTileNames, tileMap, TileRefs, tileWidth, tileHeight);
 
@@ -173,7 +199,7 @@ namespace TileBasedPlayer20172018
             //List<Tile> tileFound = SimpleTileLayer.GetNamedTiles(backTileNames[(int)TileType.GREENBOX]);
 
             #region Splash Screen
-            MainScreen = new SplashScreen(this, Vector2.Zero, 8000.00f,
+            MainScreen = new SplashScreen(this, Vector2.Zero, 120000.00f,
                             Content.Load<Texture2D>("background/MainMenu"),
                             Content.Load<Texture2D>("background/Pause"),
                             Content.Load<Texture2D>("background/Lose"),
@@ -185,8 +211,31 @@ namespace TileBasedPlayer20172018
                             Content.Load<Song>("audio/Win"),
                             Keys.P, 
                             Keys.Enter,
-                            Content.Load<SpriteFont>("fonts/font"));
+                            Content.Load<SpriteFont>("fonts/font"),
+                            Content.Load<SoundEffect>("audio/BlinkPlay"),
+                            Content.Load<SoundEffect>("audio/BlinkPause"));
             #endregion
+        }
+
+        protected override void UnloadContent()
+        {
+            // TODO: Unload any non ContentManager content here
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
+
+            if (this.IsActive)
+                base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.Transparent);
+
+            base.Draw(gameTime);
         }
 
         public void SetColliders(TileType t)
@@ -203,27 +252,7 @@ namespace TileBasedPlayer20172018
                             ));
                     }
                 }
-            } 
-        }
-
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
-        }
-
-        protected override void Update(GameTime gameTime)
-        {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            base.Update(gameTime);
-        }
-
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.Transparent);
-
-            base.Draw(gameTime);
+            }
         }
     }
 }

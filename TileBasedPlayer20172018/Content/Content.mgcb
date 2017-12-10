@@ -134,3 +134,69 @@
 /processorParam:TextureFormat=Color
 /build:background/Win.png
 
+#begin audio/BlinkPause.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/BlinkPause.wav
+
+#begin audio/BlinkPlay.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/BlinkPlay.wav
+
+#begin audio/PlayerTankHum.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/PlayerTankHum.wav
+
+#begin audio/PlayerTankReload.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/PlayerTankReload.wav
+
+#begin audio/PlayerTankShoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/PlayerTankShoot.wav
+
+#begin audio/PlayerTankTracks.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/PlayerTankTracks.wav
+
+#begin audio/PlayerTurretTurn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/PlayerTurretTurn.wav
+
+#begin audio/SentryTurretTurn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/SentryTurretTurn.wav
+
+#begin audio/TankShoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/TankShoot.wav
+
+#begin audio/SentryTankShoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/SentryTankShoot.wav
+
+#begin audio/SentryTankShootAlt.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/SentryTankShootAlt.wav
+

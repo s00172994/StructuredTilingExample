@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Engine.Engines;
 using AnimatedSprite;
 using Tiling;
+using Helpers;
 
 namespace Tiler
 {
@@ -51,25 +52,28 @@ namespace Tiler
 
         public override void Update(GameTime gameTime)
         {
-            TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
-            Sentry sentry = (Sentry)Game.Services.GetService(typeof(Sentry));
-
-            // Props this turret onto the appropiate tank body
-            if (this.Name == sentry.Name && sentry != null)
+            if (Helper.CurrentGameStatus == GameStatus.PLAYING)
             {
-                AddSelfToBody(sentry.PixelPosition + new Vector2(WIDTH_IN, 0f));
+                TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
+                Sentry sentry = (Sentry)Game.Services.GetService(typeof(Sentry));
+
+                //Props this turret onto the appropiate tank body
+                if (this.Name == sentry.Name && sentry != null)
+                {
+                    AddSelfToBody(sentry.PixelPosition + new Vector2(WIDTH_IN, 0f));
+                }
+
+                angleOfRotationPrev = this.angleOfRotation;
+
+                this.Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
+
+                Bullet.GetDirection(this.Direction);
+
+                //Face and shoot at the player when player is within radius
+                Detect(player);
+
+                base.Update(gameTime);
             }
-
-            angleOfRotationPrev = this.angleOfRotation;
-
-            this.Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
-
-            Bullet.GetDirection(this.Direction);
-
-            // Face and shoot at the player when player is within radius
-            Detect(player);
-
-            base.Update(gameTime);
         }
 
         public void AddProjectile(Projectile projectileIn)
