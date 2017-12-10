@@ -143,6 +143,7 @@ namespace Screens
                         Active = !Active;
                         BlinkPause.Play();
                         Helper.CurrentGameStatus = GameStatus.PAUSED;
+                        
                     }
                     
                     if (TimeRemaining > 0)

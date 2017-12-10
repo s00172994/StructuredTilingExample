@@ -20,6 +20,7 @@ namespace TileBasedPlayer20172018
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Color BackgroundColor = new Color(185, 132, 62);
 
         Camera CurrentCamera;
         SplashScreen MainScreen;
@@ -104,14 +105,17 @@ namespace TileBasedPlayer20172018
             TilePlayer tankPlayer = new TilePlayer(this, new Vector2(64, 128), new List<TileRef>()
             {
                 new TileRef(10, 0, 0),
-            }, 64, 64, 0f);
+            }, 64, 64, 0f,
+            Content.Load<SoundEffect>("audio/PlayerTankHum"),
+            Content.Load<SoundEffect>("audio/PlayerTankTracks"));
 
             TilePlayerTurret tankPlayerTurret = new TilePlayerTurret(this, new Vector2(64, 128), new List<TileRef>()
             {
                 new TileRef(10, 1, 0),
             }, 64, 64, 0f,
             Content.Load<SoundEffect>("audio/PlayerTankShoot"),
-            Content.Load<SoundEffect>("audio/PlayerTankReload"));
+            Content.Load<SoundEffect>("audio/PlayerTankReload"),
+            Content.Load<SoundEffect>("audio/PlayerTurretTurn"));
 
             // Add Tank Projectile
             Projectile bullet = new Projectile(this, "PLAYER", tankPlayerTurret.CentrePos, new List<TileRef>()
@@ -145,7 +149,7 @@ namespace TileBasedPlayer20172018
             SentryTurret enemyTurretOne = new SentryTurret(this, new Vector2(128, 128), new List<TileRef>()
             {
                 new TileRef(10, 5, 0),
-            }, 64, 64, 0f, "Enemy Tank 1");
+            }, 64, 64, 0f, "Enemy Tank 1", Content.Load<SoundEffect>("audio/SentryTurretTurn"));
 
             Projectile enemyBulletOne = new Projectile(this, "SENTRY", tankPlayerTurret.CentrePos, new List<TileRef>()
             {
@@ -233,7 +237,7 @@ namespace TileBasedPlayer20172018
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Transparent);
+            GraphicsDevice.Clear(BackgroundColor);
 
             base.Draw(gameTime);
         }

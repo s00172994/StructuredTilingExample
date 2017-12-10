@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 
 using Engine.Engines;
@@ -16,15 +17,16 @@ namespace Tiler
 {
     class SentryTurret : RotatingSprite
     {
+        float volumeVelocity = 0;
         float collisionRadius = 300;
         float turnSpeed = 0.015f;
         const float WIDTH_IN = 11f; // Width in from the left for the sprites origin
         float angleOfRotationPrev;
-
         public string Name;
-
         public Projectile Bullet;
         public Vector2 Direction;
+        private SoundEffect TankTurnSound;
+        private SoundEffectInstance TurnSoundInstance;
 
         public Vector2 CentrePos
         {
@@ -42,12 +44,22 @@ namespace Tiler
         }
 
         public SentryTurret(Game game, Vector2 sentryPosition,
-            List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, string nameIn)
+            List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, string nameIn,
+            SoundEffect turnSound)
                 : base(game, sentryPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Name = nameIn;
             DrawOrder = 60;
             origin = trueOrigin;
+
+            #region Turret Audio
+            TankTurnSound = turnSound;
+            TurnSoundInstance = TankTurnSound.CreateInstance();
+            TurnSoundInstance.Volume = 0f;
+            TurnSoundInstance.Pitch = -0.75f;
+            TurnSoundInstance.IsLooped = true;
+            TurnSoundInstance.Play();
+            #endregion
         }
 
         public override void Update(GameTime gameTime)
@@ -71,6 +83,7 @@ namespace Tiler
 
                 //Face and shoot at the player when player is within radius
                 Detect(player);
+                PlaySounds();
 
                 base.Update(gameTime);
             }
@@ -130,6 +143,21 @@ namespace Tiler
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
+        }
+
+        public void PlaySounds()
+        {
+            volumeVelocity = (turnSpeed * 4); // 0.06
+            volumeVelocity = MathHelper.Clamp(volumeVelocity, 0, 0.8f);
+
+            if (Math.Round(this.angleOfRotationPrev, 2) != Math.Round(this.angleOfRotation, 2))
+            {
+                TurnSoundInstance.Volume = volumeVelocity;
+            }
+            else
+            {
+                TurnSoundInstance.Volume = 0f;
+            }
         }
     }
 }

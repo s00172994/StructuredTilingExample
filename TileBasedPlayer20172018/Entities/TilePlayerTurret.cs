@@ -18,6 +18,7 @@ namespace Tiler
 {
     class TilePlayerTurret : RotatingSprite
     {
+        float volumeVelocity = 0;
         private float turnSpeed = 0.04f;
         private const float WIDTH_IN = 11f; // Width in from the left for the sprites origin
         private float angleOfRotationPrev;
@@ -40,15 +41,27 @@ namespace Tiler
         }
         private SoundEffect ShellSound;
         private SoundEffect ShellReload;
+        private SoundEffect TankTurnSound;
+        private SoundEffectInstance TurnSoundInstance;
 
         public TilePlayerTurret(Game game, Vector2 playerPosition,
-            List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, SoundEffect shellSound, SoundEffect shellReload)
+            List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, 
+            SoundEffect shellSound, SoundEffect shellReload, SoundEffect turnSound)
                 : base(game, playerPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             DrawOrder = 70;
             origin = originToRotate;
+
+            #region Turret Audio
             this.ShellSound = shellSound;
             this.ShellReload = shellReload;
+            TankTurnSound = turnSound;
+            TurnSoundInstance = TankTurnSound.CreateInstance();
+            TurnSoundInstance.Volume = 0f;
+            TurnSoundInstance.Pitch = -0.75f;
+            TurnSoundInstance.IsLooped = true;
+            TurnSoundInstance.Play();
+            #endregion
         }
 
         public override void Update(GameTime gameTime)
@@ -72,6 +85,7 @@ namespace Tiler
                 Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
 
                 Fire();
+                PlaySounds();
 
                 base.Update(gameTime);
             }
@@ -116,6 +130,21 @@ namespace Tiler
                     // Shake the camera
                     thisCamera.Shake(5f, 0.5f);
                 }
+            }
+        }
+
+        public void PlaySounds()
+        {
+            volumeVelocity = turnSpeed;
+            volumeVelocity = MathHelper.Clamp(volumeVelocity, 0, 0.8f);
+
+            if (Math.Round(this.angleOfRotationPrev, 2) != Math.Round(this.angleOfRotation, 2))
+            {
+                TurnSoundInstance.Volume = volumeVelocity;
+            }
+            else
+            {
+                TurnSoundInstance.Volume = 0f;
             }
         }
     }
