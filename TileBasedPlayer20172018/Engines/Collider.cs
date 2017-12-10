@@ -9,7 +9,6 @@ using System.Text;
 
 namespace Tiler
 {
-
     public class Collider : DrawableGameComponent
     {
         public int tileX;
@@ -72,12 +71,6 @@ namespace Tiler
             }
 
             base.Draw(gameTime);
-        }
-
-        public void Draw(SpriteBatch sp)
-        {
-            if (visible)
-                sp.Draw(texture, CollisionField, Color.White);
         }
     }
 }

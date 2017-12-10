@@ -23,14 +23,16 @@ namespace TileBasedPlayer20172018
         Color BackgroundColor = new Color(185, 132, 62);
 
         Camera CurrentCamera;
-        SplashScreen MainScreen;
+        public static SplashScreen MainScreen;
 
         List<TileRef> TileRefs = new List<TileRef>();
         List<Collider> Colliders = new List<Collider>();
+        List<Sentry> Sentries = new List<Sentry>();
+        List<SentryTurret> SentryTurrets = new List<SentryTurret>();
 
-        string[] backTileNames = { "dirt", "ground", "metal", "ground2", "ground3", "ground4", "ground5", "ground7", "metal2", "metal3", "metal4" };
+        string[] backTileNames = { "dirt", "ground", "metal", "ground2", "ground3", "ground4", "ground5", "ground7", "metal2", "metal3", "metal4", "dirt2" };
         public enum TileType { DIRT, GROUND, METAL, GROUND2, GROUND3, GROUND4,
-                               GROUND5 };
+                               GROUND5, GROUND7, METAL2, METAL3, METAL4, DIRT2 };
         int tileWidth = 64;
         int tileHeight = 64;
 
@@ -60,13 +62,13 @@ namespace TileBasedPlayer20172018
         {0,0,1,1,1,1,1,5,1,1,1,0,0,1,1,5,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,5,1,1,1,1,2,2,2,2,2,2,2,2,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0},
         {0,0,1,1,1,1,1,1,1,1,1,1,1,5,1,5,1,5,1,1,1,1,1,1,5,1,1,5,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0},
         {0,0,5,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,0,0,0,0,0,0,0,0,0,0},
-        {0,0,1,1,0,0,0,0,1,6,1,6,1,1,5,1,1,1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,5,1,1,1,2,2,2,2,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,0},
-        {0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,1,1,0,0},
-        {0,0,1,1,0,0,0,0,0,0,0,0,0,0,5,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,5,1,1,5,1,1,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,1,1,0,0},
-        {0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,1,1,1,1,5,1,1,1,1,1,1,0,0},
-        {0,0,1,1,1,1,1,1,0,0,0,0,0,1,1,1,5,2,2,2,1,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,1,1,1,1,1,1,1,1,1,1,1,0,0},
-        {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,1,1,1,1,2,2,2,1,1,1,1,1,1,1,5,1,1,1,0,0},
-        {0,0,1,6,1,1,1,1,1,6,1,1,1,1,6,1,1,6,1,1,6,1,1,1,1,1,6,1,1,6,1,1,1,1,1,1,1,1,0,0,0,0,0,2,2,2,2,1,1,1,1,1,1,6,6,1,1,1,0,0},
+        {0,0,1,1,0,0,0,0,1,6,1,6,1,1,5,1,1,1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,5,1,1,1,2,2,2,2,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0},
+        {0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,0,0,0,0,0},
+        {0,0,1,1,0,0,0,0,0,0,0,0,0,0,5,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,5,1,1,5,1,1,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,0,0,0,0,0},
+        {0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,1,1,1,1,5,1,1,1,1,0,0,0,0},
+        {0,0,1,1,1,1,1,1,0,0,0,0,0,1,1,1,5,2,2,2,1,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,11},
+        {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,1,1,1,1,2,2,2,1,1,1,1,1,1,1,5,1,1,1,1,11},
+        {0,0,1,6,1,1,1,1,1,6,1,1,1,1,6,1,1,6,1,1,6,1,1,1,1,1,6,1,1,6,1,1,1,1,1,1,1,1,0,0,0,0,0,2,2,2,2,1,1,1,1,1,1,6,6,1,1,1,1,11},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         };
@@ -102,20 +104,21 @@ namespace TileBasedPlayer20172018
             new InputEngine(this);
 
             #region Create Player Tank
-            TilePlayer tankPlayer = new TilePlayer(this, new Vector2(64, 128), new List<TileRef>()
+            TilePlayer tankPlayer = new TilePlayer(this, new Vector2(96, 192), new List<TileRef>()
             {
                 new TileRef(10, 0, 0),
             }, 64, 64, 0f,
             Content.Load<SoundEffect>("audio/PlayerTankHum"),
             Content.Load<SoundEffect>("audio/PlayerTankTracks"));
 
-            TilePlayerTurret tankPlayerTurret = new TilePlayerTurret(this, new Vector2(64, 128), new List<TileRef>()
+            TilePlayerTurret tankPlayerTurret = new TilePlayerTurret(this, tankPlayer.PixelPosition, new List<TileRef>()
             {
                 new TileRef(10, 1, 0),
             }, 64, 64, 0f,
             Content.Load<SoundEffect>("audio/PlayerTankShoot"),
             Content.Load<SoundEffect>("audio/PlayerTankReload"),
-            Content.Load<SoundEffect>("audio/PlayerTurretTurn"));
+            Content.Load<SoundEffect>("audio/PlayerTurretTurn"),
+            Content.Load<SoundEffect>("audio/TankExplosion"));
 
             // Add Tank Projectile
             Projectile bullet = new Projectile(this, "PLAYER", tankPlayerTurret.CentrePos, new List<TileRef>()
@@ -123,42 +126,59 @@ namespace TileBasedPlayer20172018
                 new TileRef(10, 2, 0),
             }, 64, 64, 0f, tankPlayerTurret.Direction,
             Content.Load<SoundEffect>("audio/TankShoot"));
-            tankPlayerTurret.AddProjectile(bullet);
 
+            tankPlayerTurret.AddProjectile(bullet);
             Services.AddService(tankPlayer);
             Services.AddService(tankPlayerTurret);
             #endregion
 
             #region Create Sentry Tanks
 
-            Sentry enemyOne = new Sentry(this, new Vector2(320, 128), new List<TileRef>()
+            Sentry enemyOne = new Sentry(this, new Vector2(639, 325), new List<TileRef>()
             {
                 new TileRef(10, 4, 0),
-            }, 64, 64, 0f, "Enemy Tank 1");
+            }, 64, 64, 0f, "Enemy Tank 1", -1.574f);
 
-            Sentry enemyTwo = new Sentry(this, new Vector2(420, 128), new List<TileRef>()
+            Sentry enemyTwo = new Sentry(this, new Vector2(1180, 237), new List<TileRef>()
             {
                 new TileRef(10, 4, 0),
-            }, 64, 64, 0f, "Enemy Tank 2");
+            }, 64, 64, 0f, "Enemy Tank 2", 1.574f);
 
-            Services.AddService(enemyOne);
+            Sentries.Add(enemyOne);
+            Sentries.Add(enemyTwo);
 
             #region Create Sentry Tank Turrets
 
-            SentryTurret enemyTurretOne = new SentryTurret(this, new Vector2(128, 128), new List<TileRef>()
+            SentryTurret enemyTurretOne = new SentryTurret(this, enemyOne.PixelPosition, new List<TileRef>()
             {
                 new TileRef(10, 5, 0),
-            }, 64, 64, 0f, "Enemy Tank 1", Content.Load<SoundEffect>("audio/SentryTurretTurn"));
+            }, 64, 64, 0f, "Enemy Tank 1", -1.574f, Content.Load<SoundEffect>("audio/SentryTurretTurn"),
+            Content.Load<SoundEffect>("audio/TankExplosion"));
+
+            SentryTurret enemyTurretTwo = new SentryTurret(this, enemyTwo.PixelPosition, new List<TileRef>()
+            {
+                new TileRef(10, 5, 0),
+            }, 64, 64, 0f, "Enemy Tank 2", 1.574f, Content.Load<SoundEffect>("audio/SentryTurretTurn"),
+            Content.Load<SoundEffect>("audio/TankExplosion"));
 
             Projectile enemyBulletOne = new Projectile(this, "SENTRY", tankPlayerTurret.CentrePos, new List<TileRef>()
+            {
+                new TileRef(10, 2, 0),
+            }, 64, 64, 0f, enemyTurretOne.Direction, Content.Load<SoundEffect>("audio/SentryTankShoot"), 3f);
+
+            Projectile enemyBulletTwo = new Projectile(this, "SENTRY", tankPlayerTurret.CentrePos, new List<TileRef>()
             {
                 new TileRef(10, 2, 0),
             }, 64, 64, 0f, enemyTurretOne.Direction, Content.Load<SoundEffect>("audio/SentryTankShootAlt"), 3f);
 
             enemyTurretOne.AddProjectile(enemyBulletOne);
-            Services.AddService(enemyTurretOne);
-            #endregion
+            enemyTurretTwo.AddProjectile(enemyBulletTwo);
 
+            SentryTurrets.Add(enemyTurretOne);
+            SentryTurrets.Add(enemyTurretTwo);
+            #endregion
+            Services.AddService(Sentries);
+            Services.AddService(SentryTurrets);
             #endregion
 
             new Crosshair(this, new Vector2(0, 0), new List<TileRef>()
@@ -166,8 +186,9 @@ namespace TileBasedPlayer20172018
                 new TileRef(10, 3, 0),
             }, 64, 64, 0f);
 
-            SetColliders(TileType.DIRT);
-            SetColliders(TileType.METAL);
+            SetCollider(TileType.DIRT);
+            SetCollider(TileType.METAL);
+            SetTrigger(TileType.DIRT2);
 
             base.Initialize();
         }
@@ -187,13 +208,14 @@ namespace TileBasedPlayer20172018
             TileRefs.Add(new TileRef(4, 1, 1)); // Ground
             TileRefs.Add(new TileRef(3, 2, 2)); // Metal Box
             TileRefs.Add(new TileRef(5, 0, 3)); // Ground 2
-            TileRefs.Add(new TileRef(5, 1, 4)); // groud 3
-            TileRefs.Add(new TileRef(7, 2, 5)); // ground 4
-            TileRefs.Add(new TileRef(7, 3, 6)); // ground 5
-            TileRefs.Add(new TileRef(6, 2, 7)); // ground 4
-            TileRefs.Add(new TileRef(1, 1, 8)); // metal 2
-            TileRefs.Add(new TileRef(2, 1, 9)); // metal 3
-            TileRefs.Add(new TileRef(3, 1, 10)); // metal 4
+            TileRefs.Add(new TileRef(5, 1, 4)); // Ground 3
+            TileRefs.Add(new TileRef(7, 2, 5)); // Ground 4
+            TileRefs.Add(new TileRef(7, 3, 6)); // Ground 5
+            TileRefs.Add(new TileRef(6, 2, 7)); // Ground 4
+            TileRefs.Add(new TileRef(1, 1, 8)); // Metal 2
+            TileRefs.Add(new TileRef(2, 1, 9)); // Metal 3
+            TileRefs.Add(new TileRef(3, 1, 10)); // Metal 4
+            TileRefs.Add(new TileRef(4, 2, 11)); // Dirt (Trigger)
 
             new SimpleTileLayer(this, backTileNames, tileMap, TileRefs, tileWidth, tileHeight);
 
@@ -240,7 +262,7 @@ namespace TileBasedPlayer20172018
             base.Draw(gameTime);
         }
 
-        public void SetColliders(TileType t)
+        public void SetCollider(TileType t)
         {
             for (int x = 0; x < tileMap.GetLength(1); x++)
             {
@@ -249,6 +271,22 @@ namespace TileBasedPlayer20172018
                     if (tileMap[y, x] == (int)t)
                     {
                         Colliders.Add(new Collider(this,
+                            Content.Load<Texture2D>(@"tiles/collider"),
+                            x, y
+                            ));
+                    }
+                }
+            }
+        }
+        public void SetTrigger(TileType t)
+        {
+            for (int x = 0; x < tileMap.GetLength(1); x++)
+            {
+                for (int y = 0; y < tileMap.GetLength(0); y++)
+                {
+                    if (tileMap[y, x] == (int)t)
+                    {
+                        Colliders.Add(new TileTrigger("EXIT", this,
                             Content.Load<Texture2D>(@"tiles/collider"),
                             x, y
                             ));

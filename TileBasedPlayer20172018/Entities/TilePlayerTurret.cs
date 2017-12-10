@@ -39,20 +39,24 @@ namespace Tiler
                 return new Vector2(((FrameWidth / 2) - WIDTH_IN), (FrameHeight / 2));
             }
         }
+        private SoundEffect ExplosionSound;
         private SoundEffect ShellSound;
         private SoundEffect ShellReload;
         private SoundEffect TankTurnSound;
         private SoundEffectInstance TurnSoundInstance;
+        private bool IsDead = false;
 
         public TilePlayerTurret(Game game, Vector2 playerPosition,
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, 
-            SoundEffect shellSound, SoundEffect shellReload, SoundEffect turnSound)
+            SoundEffect shellSound, SoundEffect shellReload, SoundEffect turnSound,
+            SoundEffect explosionSound)
                 : base(game, playerPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             DrawOrder = 70;
             origin = originToRotate;
 
             #region Turret Audio
+            this.ExplosionSound = explosionSound;
             this.ShellSound = shellSound;
             this.ShellReload = shellReload;
             TankTurnSound = turnSound;
@@ -68,26 +72,34 @@ namespace Tiler
         {
             if (Helper.CurrentGameStatus == GameStatus.PLAYING)
             {
-                TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
-
-                // Props this turret onto the underside tank body if it exists
-                if (player != null)
+                if (!IsDead)
                 {
-                    Track(player.PixelPosition + new Vector2(WIDTH_IN, 0f));
+                    TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
+
+                    // Props this turret onto the underside tank body if it exists
+                    if (player != null)
+                    {
+                        Track(player.PixelPosition + new Vector2(WIDTH_IN, 0f));
+                    }
+
+                    CrosshairPosition = ((InputEngine.MousePosition) + Camera.CamPos);
+
+                    angleOfRotationPrev = this.angleOfRotation;
+
+                    this.angleOfRotation = TurnToFace(this.CentrePos - new Vector2(WIDTH_IN, 0f), CrosshairPosition, this.angleOfRotation, turnSpeed);
+
+                    Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
+
+                    Fire();
+                    PlaySounds();
+
+                    base.Update(gameTime);
                 }
-
-                CrosshairPosition = ((InputEngine.MousePosition) + Camera.CamPos);
-
-                angleOfRotationPrev = this.angleOfRotation;
-
-                this.angleOfRotation = TurnToFace(this.CentrePos - new Vector2(WIDTH_IN, 0f), CrosshairPosition, this.angleOfRotation, turnSpeed);
-
-                Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
-
-                Fire();
-                PlaySounds();
-
-                base.Update(gameTime);
+                else
+                {
+                    ExplosionSound.Play();
+                    IsDead = true;
+                }
             }
         }
 

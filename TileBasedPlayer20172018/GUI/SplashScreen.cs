@@ -9,10 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Helpers;
+using Tiler;
 
 namespace Screens
 {
-    class SplashScreen : DrawableGameComponent
+    public class SplashScreen : DrawableGameComponent
     {
         Texture2D _txMain;
         Texture2D _txPause;
@@ -98,6 +99,7 @@ namespace Screens
             Font = fontIn;
             TimeRemaining = timeLeft;
             CurrentScreen = ActiveScreen.MAIN;
+            CurrentGameCondition = GameCondition.LOSE;
             Active = true;
             MediaPlayer.Volume = VOLUME;
         }
@@ -130,6 +132,8 @@ namespace Screens
                     }
                     break;
                 case ActiveScreen.PLAY:
+                    TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
+
                     if (Active)
                     {
                         MediaPlayer.Stop();
@@ -146,9 +150,10 @@ namespace Screens
                         
                     }
                     
-                    if (TimeRemaining > 0)
+                    if (player.Health > 0)
                     {
-                        TimeRemaining -= deltaTime;
+                        if (TimeRemaining > 0)
+                            TimeRemaining -= deltaTime;
                     }
                     else
                     {
@@ -156,6 +161,13 @@ namespace Screens
                         Active = !Active;
                         CurrentGameCondition = GameCondition.LOSE;
                         CurrentScreen = ActiveScreen.LOSE;
+                    }
+
+                    if (CurrentGameCondition == GameCondition.WIN)
+                    {
+                        MediaPlayer.Stop();
+                        Active = !Active;
+                        CurrentScreen = ActiveScreen.WIN;
                     }
                     break;
                 case ActiveScreen.PAUSE:
@@ -181,6 +193,7 @@ namespace Screens
                     }
                     break;
                 case ActiveScreen.LOSE:
+                    
                     if (MediaPlayer.State == MediaState.Stopped && TrackPlayCount < 1)
                     {
                         MediaPlayer.Play(GameOverTrack);
@@ -189,6 +202,11 @@ namespace Screens
                     Helper.CurrentGameStatus = GameStatus.PAUSED;
                     break;
                 case ActiveScreen.WIN:
+                    if (MediaPlayer.State == MediaState.Stopped && TrackPlayCount < 1)
+                    {
+                        MediaPlayer.Play(WinTrack);
+                        TrackPlayCount++;
+                    }
                     Helper.CurrentGameStatus = GameStatus.PAUSED;
                     break;
                 default:

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 
@@ -12,6 +13,7 @@ using Engine.Engines;
 using AnimatedSprite;
 using Tiling;
 using Helpers;
+using CameraNS;
 
 namespace Tiler
 {
@@ -41,6 +43,9 @@ namespace Tiler
         }
         public int Velocity = 15;
         public Vector2 Direction;
+        private Random damageRate = new Random();
+        private int sentryDamageRate = 35;
+        private int playerDamageRate = 10;
         private float explosionLifeSpan = 2f; // Default explosion life in seconds
         private const float FLYING_LIFE_SPAN = 1f; // Default flight life in seconds
         private float timer = 0;
@@ -120,18 +125,31 @@ namespace Tiler
                         // Ensure the sentry doesn't shoot itself !
                         if (Parent != "PLAYER")
                         {
+                            Camera thisCamera = (Camera)Game.Services.GetService(typeof(Camera));
+                            TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
 
+                            if (collisionDetect(player))
+                            {
+                                playerDamageRate = damageRate.Next(5, 15);
+                                projectileState = PROJECTILE_STATUS.Exploding;
+                                player.Health -= playerDamageRate;
+                                thisCamera.Shake(5f, 0.5f);
+                            }
                         }
                         else
                         {
                             // Reference Collision Objects
-                            SentryTurret otherSentry = (SentryTurret)Game.Services.GetService(typeof(SentryTurret));
+                            List<SentryTurret> SentryTurretList = (List<SentryTurret>)Game.Services.GetService(typeof(List<SentryTurret>));
 
                             // Check collision with Sentry
-                            if (collisionDetect(otherSentry))
+                            foreach (SentryTurret otherSentry in SentryTurretList)
                             {
-                                projectileState = PROJECTILE_STATUS.Exploding;
-
+                                if (collisionDetect(otherSentry))
+                                {
+                                    sentryDamageRate = damageRate.Next(30, 40);
+                                    projectileState = PROJECTILE_STATUS.Exploding;
+                                    otherSentry.Health -= sentryDamageRate;
+                                }
                             }
                         }
                         #endregion

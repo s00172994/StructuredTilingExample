@@ -49,6 +49,7 @@
     <Compile Include="GUI\HealthBar.cs" />
     <Compile Include="Engines\Helpers.cs" />
     <Compile Include="Engines\InputEngine.cs" />
+    <Compile Include="Events\TileTrigger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Entities\Particles\Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

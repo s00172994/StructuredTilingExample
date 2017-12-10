@@ -200,3 +200,9 @@
 /processorParam:Quality=Best
 /build:audio/SentryTankShootAlt.wav
 
+#begin audio/TankExplosion.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/TankExplosion.wav
+

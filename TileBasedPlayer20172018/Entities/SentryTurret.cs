@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -15,20 +16,22 @@ using Helpers;
 
 namespace Tiler
 {
-    class SentryTurret : RotatingSprite
+    public class SentryTurret : RotatingSprite
     {
         float volumeVelocity = 0;
-        float collisionRadius = 300;
+        float collisionRadius = 400;
         float turnSpeed = 0.015f;
         const float WIDTH_IN = 11f; // Width in from the left for the sprites origin
         float angleOfRotationPrev;
         public string Name;
         public Projectile Bullet;
         public Vector2 Direction;
+        private SoundEffect ExplosionSound;
         private SoundEffect TankTurnSound;
         private SoundEffectInstance TurnSoundInstance;
         HealthBar healthBar;
-
+        public static int Count = 0; // Keeps track of amount of Sentries created
+        private bool isDead = false;
         public Vector2 CentrePos
         {
             get
@@ -46,17 +49,22 @@ namespace Tiler
 
         public SentryTurret(Game game, Vector2 sentryPosition,
             List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, string nameIn,
-            SoundEffect turnSound)
+            float angle,
+            SoundEffect turnSound,
+            SoundEffect explosionSound)
                 : base(game, sentryPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Name = nameIn;
             DrawOrder = 60;
             origin = trueOrigin;
+            this.angleOfRotation = angle;
             healthBar = new HealthBar(game, PixelPosition);
             Health = 100;
             AddHealthBar(healthBar);
+            Interlocked.Increment(ref Count);
 
             #region Turret Audio
+            ExplosionSound = explosionSound;
             TankTurnSound = turnSound;
             TurnSoundInstance = TankTurnSound.CreateInstance();
             TurnSoundInstance.Volume = 0f;
@@ -70,26 +78,38 @@ namespace Tiler
         {
             if (Helper.CurrentGameStatus == GameStatus.PLAYING)
             {
-                TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
-                Sentry sentry = (Sentry)Game.Services.GetService(typeof(Sentry));
-
-                //Props this turret onto the appropiate tank body
-                if (this.Name == sentry.Name && sentry != null)
+                if (Health > 0)
                 {
-                    AddSelfToBody(sentry.PixelPosition + new Vector2(WIDTH_IN, 0f));
+                    TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
+                    List<Sentry> Sentries = (List<Sentry>)Game.Services.GetService(typeof(List<Sentry>));
+
+                    foreach (Sentry sentry in Sentries)
+                    {
+                        // Props this turret onto the appropiate tank body
+                        if (this.Name == sentry.Name && sentry != null)
+                        {
+                            AddSelfToBody(sentry.PixelPosition + new Vector2(WIDTH_IN, 0f));
+                        }
+                    }
+
+                    angleOfRotationPrev = this.angleOfRotation;
+
+                    this.Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
+
+                    Bullet.GetDirection(this.Direction);
+
+                    // Face and shoot at the player when player is within radius
+                    Detect(player);
+                    PlaySounds();
+
+                    base.Update(gameTime);
                 }
-
-                angleOfRotationPrev = this.angleOfRotation;
-
-                this.Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
-
-                Bullet.GetDirection(this.Direction);
-
-                //Face and shoot at the player when player is within radius
-                Detect(player);
-                PlaySounds();
-
-                base.Update(gameTime);
+                else if (!isDead)
+                {
+                    Interlocked.Decrement(ref Count);
+                    ExplosionSound.Play();
+                    isDead = true;
+                }
             }
         }
 
@@ -146,7 +166,8 @@ namespace Tiler
 
         public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime);
+            if (Health > 0)
+                base.Draw(gameTime);
         }
 
         public void PlaySounds()

@@ -27,11 +27,12 @@ namespace Tiler
         public string Name;
 
         public Sentry(Game game, Vector2 startPosition,
-            List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, string nameIn)
+            List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth, string nameIn, float angle)
                 : base(game, startPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Name = nameIn;
             DrawOrder = 30;
+            this.angleOfRotation = angle;
         }
 
         public override void Update(GameTime gameTime)
