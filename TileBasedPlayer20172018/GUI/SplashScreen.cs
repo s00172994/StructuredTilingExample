@@ -102,6 +102,7 @@ namespace Screens
             CurrentGameCondition = GameCondition.LOSE;
             Active = true;
             MediaPlayer.Volume = VOLUME;
+            MediaPlayer.IsRepeating = true;
         }
 
         public override void Update(GameTime gameTime)
