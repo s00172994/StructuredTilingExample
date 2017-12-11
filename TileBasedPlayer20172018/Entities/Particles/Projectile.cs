@@ -229,8 +229,18 @@ namespace Tiler
 
         public override void Draw(GameTime gameTime)
         {
+            BulletExplosion Explosion = (BulletExplosion)Game.Services.GetService(typeof(BulletExplosion));
+
             if (ProjectileState != Projectile.PROJECTILE_STATUS.Idle)
             {
+                Explosion.Visible = false;
+
+                if (ProjectileState == Projectile.PROJECTILE_STATUS.Exploding && timer < 0.75f)
+                {
+                    Explosion.Visible = true;
+                    Explosion.PixelPosition = this.PixelPosition;
+                    Explosion.Draw(gameTime);
+                }
                 base.Draw(gameTime);
             }
         }

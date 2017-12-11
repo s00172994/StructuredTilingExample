@@ -91,6 +91,17 @@ namespace Tiler
 
         public override void Draw(GameTime gameTime)
         {
+            TankExplosion Explosion = (TankExplosion)Game.Services.GetService(typeof(TankExplosion));
+
+            Explosion.Visible = false;
+
+            if (Health <= 0)
+            {
+                Explosion.Visible = true;
+                Explosion.PixelPosition = this.CentrePos;
+                Explosion.Draw(gameTime);
+            }
+
             base.Draw(gameTime);
         }
 

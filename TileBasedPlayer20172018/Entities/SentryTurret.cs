@@ -167,7 +167,13 @@ namespace Tiler
         public override void Draw(GameTime gameTime)
         {
             if (Health > 0)
+            {
                 base.Draw(gameTime);
+            }
+            else
+            {
+
+            }
         }
 
         public void PlaySounds()

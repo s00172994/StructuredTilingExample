@@ -133,24 +133,31 @@ namespace AnimatedSprite
 
         public override void Update(GameTime gameTime)
         {
-            timer += (float)gameTime.ElapsedGameTime.Milliseconds;
-
-            //if the timer is greater then the time between frames, then animate
-            if (timer > mililsecondsBetweenFrames)
+            if (Visible)
             {
-                _currentFrame++;
-                //if we have exceed the number of frames
-                if (_currentFrame > Frames.Count - 1)
+                timer += (float)gameTime.ElapsedGameTime.Milliseconds;
+
+                //if the timer is greater then the time between frames, then animate
+                if (timer > mililsecondsBetweenFrames)
                 {
-                    _currentFrame = 0;
+                    _currentFrame++;
+                    //if we have exceed the number of frames
+                    if (_currentFrame > Frames.Count - 1)
+                    {
+                        _currentFrame = 0;
+                    }
+                    //reset our timer
+                    timer = 0f;
                 }
-                //reset our timer
-                timer = 0f;
+                //set the source to be the current frame in our animation
+                sourceRectangle = new Rectangle(Frames[CurrentFrame]._sheetPosX * FrameWidth,
+                        Frames[CurrentFrame]._sheetPosY * FrameHeight,
+                        FrameWidth, FrameHeight);
             }
-            //set the source to be the current frame in our animation
-            sourceRectangle = new Rectangle(Frames[CurrentFrame]._sheetPosX * FrameWidth,
-                    Frames[CurrentFrame]._sheetPosY * FrameHeight,
-                    FrameWidth, FrameHeight);
+            else
+            {
+                _currentFrame = 0;
+            }
         }
 
         public bool collisionDetect(AnimateSheetSprite other)

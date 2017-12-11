@@ -35,6 +35,11 @@ namespace Tiler
             this.angleOfRotation = angle;
         }
 
+        public override void Draw(GameTime gameTime)
+        {
+            base.Draw(gameTime);
+        }
+
         public override void Update(GameTime gameTime)
         {
             PreviousPosition = PixelPosition;

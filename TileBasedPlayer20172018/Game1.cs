@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 
@@ -12,7 +13,7 @@ using CameraNS;
 using Engine.Engines;
 using Screens;
 using Helpers;
-using Microsoft.Xna.Framework.Media;
+using AnimatedSprite;
 
 namespace TileBasedPlayer20172018
 {
@@ -128,6 +129,39 @@ namespace TileBasedPlayer20172018
             Content.Load<SoundEffect>("audio/TankShoot"),
             Content.Load<SoundEffect>("audio/TankArmorPierce"));
             #endregion
+
+            MuzzleFlash muzzleFlash = new MuzzleFlash(this, tankPlayerTurret.PixelPosition, new List<TileRef>()
+            {
+                new TileRef(11,1,0),
+                new TileRef(11,0,0),
+            }, 64, 64, 0f);
+
+            BulletExplosion bulletExplosionSprite = new BulletExplosion(this, bullet.PixelPosition, new List<TileRef>()
+            {
+                new TileRef(0,7,0),
+                new TileRef(1,7,0),
+                new TileRef(2,7,0),
+                new TileRef(3,7,0),
+                new TileRef(4,7,0),
+                new TileRef(5,7,0),
+                new TileRef(6,7,0),
+                new TileRef(7,7,0)
+            }, 64, 64, 0f);
+
+            TankExplosion tankExplosionSprite = new TankExplosion(this, tankPlayer.PixelPosition, new List<TileRef>()
+            {
+                new TileRef(0,6,0),
+                new TileRef(1,6,0),
+                new TileRef(2,6,0),
+                new TileRef(3,6,0),
+                new TileRef(4,6,0),
+                new TileRef(5,6,0),
+                new TileRef(6,6,0),
+                new TileRef(7,6,0)
+            }, 64, 64, 0f);
+
+            Services.AddService(tankExplosionSprite);
+            Services.AddService(bulletExplosionSprite);
 
             tankPlayerTurret.AddProjectile(bullet);
             Services.AddService(tankPlayer);
