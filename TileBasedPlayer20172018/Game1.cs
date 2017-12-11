@@ -453,8 +453,8 @@ namespace TileBasedPlayer20172018
                 new TileRef(10, 3, 0),
             }, 64, 64, 0f);
 
-            //SetCollider(TileType.DIRT);
-            //SetCollider(TileType.METAL);
+            SetCollider(TileType.DIRT);
+            SetCollider(TileType.METAL);
             SetTrigger(TileType.DIRT2); // For WIN condition
 
             base.Initialize();
