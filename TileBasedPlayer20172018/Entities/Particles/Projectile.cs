@@ -61,10 +61,11 @@ namespace Tiler
             set
             { _sndShoot = value; }
         }
+        private SoundEffect _sndPierce;
         public bool ShootSoundPlayed = false;
 
         public Projectile(Game game, string ParentName, Vector2 projectilePosition, List<TileRef> sheetRefs, 
-            int frameWidth, int frameHeight, float layerDepth, Vector2 direction, SoundEffect sndShoot)
+            int frameWidth, int frameHeight, float layerDepth, Vector2 direction, SoundEffect sndShoot, SoundEffect sndPierce)
             : base(game, projectilePosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Parent = ParentName;
@@ -73,11 +74,14 @@ namespace Tiler
             DrawOrder = 50;
             StartPosition = projectilePosition;
             _sndShoot = sndShoot;
+            _sndPierce = sndPierce;
+            if (Parent.ToUpper() == "SENTRY") Velocity /= 3;
         }
 
         #region LifeSpan Overload Method
         public Projectile(Game game, string ParentName, Vector2 projectilePosition, List<TileRef> sheetRefs,
-            int frameWidth, int frameHeight, float layerDepth, Vector2 direction, SoundEffect sndShoot, float lifeSpanIn)
+            int frameWidth, int frameHeight, float layerDepth, Vector2 direction, SoundEffect sndShoot, SoundEffect sndPierce, 
+            float lifeSpanIn)
             : base(game, projectilePosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             Parent = ParentName;
@@ -86,6 +90,8 @@ namespace Tiler
             DrawOrder = 50;
             explosionLifeSpan = lifeSpanIn;
             _sndShoot = sndShoot;
+            _sndPierce = sndPierce;
+            if (Parent.ToUpper() == "SENTRY") Velocity /= 3;
         }
         #endregion
 
@@ -133,7 +139,8 @@ namespace Tiler
                                 playerDamageRate = damageRate.Next(5, 15);
                                 projectileState = PROJECTILE_STATUS.Exploding;
                                 player.Health -= playerDamageRate;
-                                thisCamera.Shake(5f, 0.5f);
+                                thisCamera.Shake(7.5f, 0.25f);
+                                _sndPierce.Play();
                             }
                         }
                         else
@@ -149,6 +156,7 @@ namespace Tiler
                                     sentryDamageRate = damageRate.Next(30, 40);
                                     projectileState = PROJECTILE_STATUS.Exploding;
                                     otherSentry.Health -= sentryDamageRate;
+                                    _sndPierce.Play();
                                 }
                             }
                         }

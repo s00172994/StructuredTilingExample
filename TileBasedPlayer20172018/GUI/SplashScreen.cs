@@ -19,7 +19,7 @@ namespace Screens
         Texture2D _txPause;
         Texture2D _txGameOver;
         Texture2D _txWin;
-        public const float VOLUME = 0.5f;
+        public const float VOLUME = 0.6f;
         public bool Active { get; set; }
         public Texture2D txMain
         {
@@ -150,10 +150,9 @@ namespace Screens
                         
                     }
                     
-                    if (player.Health > 0)
+                    if (player.Health > 0 && TimeRemaining > 0)
                     {
-                        if (TimeRemaining > 0)
-                            TimeRemaining -= deltaTime;
+                        TimeRemaining -= deltaTime;
                     }
                     else
                     {

@@ -206,3 +206,9 @@
 /processorParam:Quality=Best
 /build:audio/TankExplosion.wav
 
+#begin audio/TankArmorPierce.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/TankArmorPierce.wav
+
