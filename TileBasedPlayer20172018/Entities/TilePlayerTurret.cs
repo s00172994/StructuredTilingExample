@@ -101,6 +101,10 @@ namespace Tiler
                     IsDead = true;
                 }
             }
+            else
+            {
+                TurnSoundInstance.Stop();
+            }
         }
 
         public void Track(Vector2 followPos)
@@ -158,6 +162,8 @@ namespace Tiler
 
         public void PlaySounds()
         {
+            TurnSoundInstance.Play();
+
             volumeVelocity = turnSpeed;
             volumeVelocity = MathHelper.Clamp(volumeVelocity, 0, 0.8f);
 
