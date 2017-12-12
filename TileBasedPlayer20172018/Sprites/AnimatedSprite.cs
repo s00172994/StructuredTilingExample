@@ -161,7 +161,7 @@ namespace AnimatedSprite
 
         public bool collisionDetect(AnimateSheetSprite other)
         {
-            Rectangle myBound = new Rectangle((int)this.PixelPosition.X, (int)this.PixelPosition.Y, this.FrameWidth / 2, this.FrameHeight / 2);
+            Rectangle myBound = new Rectangle((int)(this.PixelPosition.X + FrameWidth / 2), (int)(this.PixelPosition.Y + FrameHeight / 2), 12, 2);
             Rectangle otherBound = new Rectangle((int)other.PixelPosition.X, (int)other.PixelPosition.Y, other.FrameWidth, other.FrameHeight);
 
             return myBound.Intersects(otherBound);

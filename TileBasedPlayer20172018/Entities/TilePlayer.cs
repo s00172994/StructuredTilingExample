@@ -87,6 +87,10 @@ namespace Tiler
 
                 base.Update(gameTime);
             }
+            else
+            {
+                StopSounds();
+            }
         }
 
         public override void Draw(GameTime gameTime)
@@ -136,12 +140,20 @@ namespace Tiler
 
         public void PlaySounds()
         {
+            HumSoundInstance.Play();
+            TrackSoundInstance.Play();
             volumeVelocity = (Velocity.X + Velocity.Y) / (MaxVelocity.X + MaxVelocity.Y);
             pitchVelocity = ((Velocity.X + Velocity.Y) / 2) / (MaxVelocity.X + MaxVelocity.Y);
             volumeVelocity = MathHelper.Clamp(volumeVelocity, 0, 0.5f);
             pitchVelocity = MathHelper.Clamp(pitchVelocity, -1, 1);
             HumSoundInstance.Pitch = pitchVelocity;
             TrackSoundInstance.Volume = volumeVelocity;
+        }
+
+        public void StopSounds()
+        {
+            HumSoundInstance.Stop();
+            TrackSoundInstance.Stop();
         }
     }
 }

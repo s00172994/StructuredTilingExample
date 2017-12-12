@@ -80,7 +80,7 @@ namespace Tiler
         {
             if (Helper.CurrentGameStatus == GameStatus.PLAYING)
             {
-                if (Health > 0)
+                if (Health > 0 && !isDead)
                 {
                     TilePlayer player = (TilePlayer)Game.Services.GetService(typeof(TilePlayer));
                     List<Sentry> Sentries = (List<Sentry>)Game.Services.GetService(typeof(List<Sentry>));
@@ -108,10 +108,15 @@ namespace Tiler
                 }
                 else if (!isDead)
                 {
+                    TurnSoundInstance.Stop();
                     Interlocked.Decrement(ref Count);
                     ExplosionSound.Play();
                     isDead = true;
                 }
+            }
+            else
+            {
+                TurnSoundInstance.Stop();
             }
         }
 
@@ -199,6 +204,8 @@ namespace Tiler
 
         public void PlaySounds()
         {
+            TurnSoundInstance.Play();
+
             volumeVelocity = (turnSpeed * 4); // 0.06
             volumeVelocity = MathHelper.Clamp(volumeVelocity, 0, 0.8f);
 
