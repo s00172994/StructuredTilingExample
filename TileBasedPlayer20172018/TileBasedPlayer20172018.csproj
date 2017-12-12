@@ -46,6 +46,7 @@
     <Compile Include="Engines\Collider.cs" />
     <Compile Include="Entities\Particles\BulletExplosion.cs" />
     <Compile Include="Entities\Particles\MuzzleFlash.cs" />
+    <Compile Include="Entities\Particles\MuzzleFlashSentry.cs" />
     <Compile Include="Entities\Particles\TankExplosion.cs" />
     <Compile Include="GUI\Crosshair.cs" />
     <Compile Include="Game1.cs" />

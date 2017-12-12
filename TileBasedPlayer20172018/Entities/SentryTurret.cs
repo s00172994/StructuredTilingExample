@@ -32,6 +32,8 @@ namespace Tiler
         HealthBar healthBar;
         public static int Count = 0; // Keeps track of amount of Sentries created
         private bool isDead = false;
+        private float explosionTimer = 0f;
+
         public Vector2 CentrePos
         {
             get
@@ -99,7 +101,7 @@ namespace Tiler
                     Bullet.GetDirection(this.Direction);
 
                     // Face and shoot at the player when player is within radius
-                    Detect(player);
+                    Detect(gameTime, player);
                     PlaySounds();
 
                     base.Update(gameTime);
@@ -128,18 +130,18 @@ namespace Tiler
                 return false;
         }
 
-        private void Detect(TilePlayer player)
+        private void Detect(GameTime gameTime, TilePlayer player)
         {
             if (IsInRadius(player))
             {
                 this.angleOfRotation = TurnToFace(this.CentrePos, player.CentrePos, this.angleOfRotation, turnSpeed);
 
                 // Shoot at the player
-                FireAt(player);
+                FireAt(gameTime, player);
             }
         }
 
-        public void FireAt(TilePlayer player)
+        public void FireAt(GameTime gameTime, TilePlayer player)
         {
             if (Bullet != null && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle)
             {
@@ -148,6 +150,8 @@ namespace Tiler
 
             if (Bullet != null)
             {
+                MuzzleFlashSentry muzzleFlash = (MuzzleFlashSentry)Game.Services.GetService(typeof(MuzzleFlashSentry));
+
                 if (Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle
                     && this.angleOfRotation != 0 && Math.Round(this.angleOfRotationPrev, 2) == Math.Round(this.angleOfRotation, 2))
                 {
@@ -155,6 +159,15 @@ namespace Tiler
                     Bullet.GetDirection(Direction);
                     // Shoot at the specified position
                     Bullet.Shoot(player.CentrePos);
+                    // Draw muzzleflash
+                    muzzleFlash.angleOfRotation = this.angleOfRotation;
+                    muzzleFlash.PixelPosition = this.PixelPosition - new Vector2(10, 0) + (this.Direction * (FrameWidth - 10));
+                    muzzleFlash.Visible = true;
+                    muzzleFlash.Draw(gameTime);
+                }
+                else
+                {
+                    muzzleFlash.Visible = false;
                 }
             }
         }
@@ -172,7 +185,15 @@ namespace Tiler
             }
             else
             {
+                if (explosionTimer < 0.75f)
+                {
+                    TankExplosion Explosion = (TankExplosion)Game.Services.GetService(typeof(TankExplosion));
 
+                    explosionTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    Explosion.PixelPosition = this.PixelPosition - new Vector2(10, -2);
+                    Explosion.Visible = true;
+                    Explosion.Draw(gameTime);
+                }
             }
         }
 

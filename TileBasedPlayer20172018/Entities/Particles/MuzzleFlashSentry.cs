@@ -9,12 +9,11 @@ using AnimatedSprite;
 
 namespace Tiling
 {
-    class BulletExplosion : AnimateSheetSprite
+    class MuzzleFlashSentry : RotatingSprite
     {
-        public BulletExplosion(Game game, Vector2 userPosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
+        public MuzzleFlashSentry(Game game, Vector2 userPosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
             : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
-            Scale = 0.5f;
             DrawOrder = 100;
             Visible = false;
         }

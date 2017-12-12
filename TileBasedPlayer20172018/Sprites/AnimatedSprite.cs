@@ -14,7 +14,7 @@ namespace AnimatedSprite
     {
         private bool visible = true;
         protected Vector2 origin;
-        protected float angleOfRotation;
+        public float angleOfRotation;
         protected float spriteDepth = 6f;
         private float scale = 1f;
         private Vector2 _pixelPosition;
@@ -58,7 +58,6 @@ namespace AnimatedSprite
             get { return sourceRectangle; }
             set { sourceRectangle = value; }
         }
-
 
         public Vector2 PixelPosition
         {

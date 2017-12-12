@@ -90,7 +90,7 @@ namespace Tiler
 
                     Direction = new Vector2((float)Math.Cos(this.angleOfRotation), (float)Math.Sin(this.angleOfRotation));
 
-                    Fire();
+                    Fire(gameTime);
                     PlaySounds();
 
                     base.Update(gameTime);
@@ -117,7 +117,7 @@ namespace Tiler
             Bullet = loadedBullet;
         }
 
-        public void Fire()
+        public void Fire(GameTime gameTime)
         {
             Camera thisCamera = (Camera)Game.Services.GetService(typeof(Camera));
 
@@ -128,6 +128,8 @@ namespace Tiler
 
             if (Bullet != null)
             {
+                MuzzleFlash muzzleFlash = (MuzzleFlash)Game.Services.GetService(typeof(MuzzleFlash));
+
                 if (Mouse.GetState().LeftButton == ButtonState.Pressed
                     && Bullet.ProjectileState == Projectile.PROJECTILE_STATUS.Idle
                     && this.angleOfRotation != 0 && Math.Round(this.angleOfRotationPrev,2) == Math.Round(this.angleOfRotation,2))
@@ -136,11 +138,20 @@ namespace Tiler
                     Bullet.GetDirection(Direction);
                     // Shoot at the specified position
                     Bullet.Shoot(CrosshairPosition - new Vector2(FrameWidth / 2, FrameHeight / 2));
+                    // Draw muzzleflash
+                    muzzleFlash.angleOfRotation = this.angleOfRotation;
+                    muzzleFlash.PixelPosition = this.PixelPosition - new Vector2(10,0) + (this.Direction * (FrameWidth - 10));
+                    muzzleFlash.Visible = true;
+                    muzzleFlash.Draw(gameTime);
                     // Play sounds
                     ShellSound.Play();
                     ShellReload.Play();
                     // Shake the camera
                     thisCamera.Shake(5f, 0.5f);
+                }
+                else
+                {
+                    muzzleFlash.Visible = false;
                 }
             }
         }

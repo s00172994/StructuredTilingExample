@@ -9,12 +9,13 @@ using AnimatedSprite;
 
 namespace Tiling
 {
-    class MuzzleFlash : AnimateSheetSprite
+    class MuzzleFlash : RotatingSprite
     {
         public MuzzleFlash(Game game, Vector2 userPosition, List<TileRef> sheetRefs, int frameWidth, int frameHeight, float layerDepth)
             : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             DrawOrder = 100;
+            Visible = false;
         }
     }
 }

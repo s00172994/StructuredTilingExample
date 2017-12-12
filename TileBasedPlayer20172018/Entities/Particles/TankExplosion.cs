@@ -15,6 +15,7 @@ namespace Tiling
             : base(game, userPosition, sheetRefs, frameWidth, frameHeight, layerDepth)
         {
             DrawOrder = 101;
+            Visible = false;
         }
     }
 }

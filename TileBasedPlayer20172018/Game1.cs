@@ -136,6 +136,12 @@ namespace TileBasedPlayer20172018
                 new TileRef(11,0,0),
             }, 64, 64, 0f);
 
+            MuzzleFlashSentry muzzleFlashSentry = new MuzzleFlashSentry(this, tankPlayerTurret.PixelPosition, new List<TileRef>()
+            {
+                new TileRef(11,0,0),
+                new TileRef(11,1,0),
+            }, 64, 64, 0f);
+
             BulletExplosion bulletExplosionSprite = new BulletExplosion(this, bullet.PixelPosition, new List<TileRef>()
             {
                 new TileRef(0,7,0),
@@ -160,6 +166,8 @@ namespace TileBasedPlayer20172018
                 new TileRef(7,6,0)
             }, 64, 64, 0f);
 
+            Services.AddService(muzzleFlash);
+            Services.AddService(muzzleFlashSentry);
             Services.AddService(tankExplosionSprite);
             Services.AddService(bulletExplosionSprite);
 
