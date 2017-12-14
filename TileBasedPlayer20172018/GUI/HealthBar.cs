@@ -15,6 +15,9 @@ namespace Helpers
         public int health;
         private Texture2D txHealthBar; // hold the texture
         public Vector2 position; // Position on the screen
+        public Color HealthyColor = new Color(243, 208, 168);
+        public Color WarningColor = new Color(255, 142, 86);
+        public Color CriticalColor = new Color(255, 86, 86);
         public Rectangle HealthRect
         {
             get
@@ -39,11 +42,11 @@ namespace Helpers
             spriteBatch.Begin(SpriteSortMode.Immediate,
                     BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Camera.CurrentCameraTranslation);
             if (health > 60)
-                spriteBatch.Draw(txHealthBar, HealthRect, Color.LimeGreen);
+                spriteBatch.Draw(txHealthBar, HealthRect, HealthyColor);
             else if (health > 30 && health <= 60)
-                spriteBatch.Draw(txHealthBar, HealthRect, Color.Orange);
+                spriteBatch.Draw(txHealthBar, HealthRect, WarningColor);
             else if (health > 0 && health <= 30)
-                spriteBatch.Draw(txHealthBar, HealthRect, Color.Red);
+                spriteBatch.Draw(txHealthBar, HealthRect, CriticalColor);
             spriteBatch.End();
         }
     }
