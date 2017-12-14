@@ -255,6 +255,12 @@ namespace Screens
                     Font.MeasureString("Time Remaining: " + String.Format("{0}", 
                     Convert.ToInt32(TimeRemaining / 1000)) + " seconds").X / 2, 24),
                     FontColor);
+                spriteBatch.DrawString(Font,
+                    "Tanks Remaining: " + String.Format("{0}", Convert.ToInt32(SentryTurret.Count)),
+                    new Vector2(Game.Window.ClientBounds.Width / 2 -
+                    Font.MeasureString("Tanks Remaining: " + String.Format("{0}", Convert.ToInt32(SentryTurret.Count))).X / 2 - 220, 
+                    (Game.Window.ClientBounds.Height - 48)),
+                    FontColor);
             }
             spriteBatch.End();
         }
