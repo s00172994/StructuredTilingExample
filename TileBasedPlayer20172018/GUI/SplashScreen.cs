@@ -198,6 +198,7 @@ namespace Screens
                     {
                         MediaPlayer.Play(GameOverTrack);
                         TrackPlayCount++;
+                        MediaPlayer.IsRepeating = false;
                     }
                     Helper.CurrentGameStatus = GameStatus.PAUSED;
                     break;
